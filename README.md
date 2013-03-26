@@ -1,14 +1,14 @@
-# teachr
+# statsteachr
 
 Modules for problem-based lesson plans with R
 
-# What is teachr?
+# What is statsteachr?
 
-teachr is an R package focused on delivering high-quality, classroom-tested lesson plans for classes in statistics and statistical computing. teachr is comprised of problem-oriented learning ''modules'' that are ready to be adapted to your classroom setting with (hopefully) minimal retooling on your part. 
+statsteachr is an R package focused on delivering high-quality, classroom-tested lesson plans for classes in statistics and statistical computing. statsteachr is comprised of problem-oriented learning ''modules'' that are ready to be adapted to your classroom setting with (hopefully) minimal retooling on your part. 
 
-# Why use teachr?
+# Why use statsteachr?
 
-I am developing teachr to faciliate the sharing of problem-oriented statistics curricula and lesson-plans. The vision is to have a standardized repository where teachrs can include 'modules'  that they have used to teach R in a classroom setting.
+I am developing statsteachr to faciliate the sharing of problem-oriented statistics curricula and lesson-plans. The vision is to have a standardized repository where statsteachrs can include 'modules'  that they have used to teach R in a classroom setting.
 
 # What is a module?
 
@@ -17,7 +17,7 @@ We use the word ''module'' to refer to a self-contained set of learning exercise
 # How do I use a module in my class?
 
 
-# How can I contribute a module to teachr?
+# How can I contribute a module to statsteachr?
 
 
 # What format does a module need to be in?
