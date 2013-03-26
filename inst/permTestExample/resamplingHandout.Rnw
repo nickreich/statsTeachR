@@ -1,0 +1,155 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper, top=1.5cm, left=2cm}                % ... or a4paper or a5paper or ... 
+\usepackage[T1]{fontenc}
+\usepackage[parfill]{parskip}
+
+\renewcommand{\familydefault}{cmss}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=true,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{pdfstartview=FitH}
+\usepackage{breakurl}
+\renewcommand{\familydefault}{cmss}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+
+\title{Resampling in R: an example}
+\author{PUBHLTH 590F: Intro to Stat Computing and Data Visualization (UMass-Amherst)\\ 
+        Instructor: Nicholas G Reich}
+\date{} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\topfraction}{0.8}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\floatpagefraction}{0.75}
+
+\makeatother
+
+\begin{document}
+
+\SweaveOpts{concordance=TRUE}
+\SweaveOpts{keep.source=TRUE}
+
+\maketitle
+
+\section*{Overview}
+The goal of this example is to demonstrate the basics of resampling a dataset using R. Resampling can be performed in many different settings. Common reasons for implementing a resampling strategy include (a) small sample sizes that make reliance on parametric assumptions tenuous, (b) highly irregular or non-normal data, or (c) no closed-form solution for an estimate of a standard error or test statistic. Resampling must be implemented with care, and in situations with complex sampling designs, can be tricky to implement. However, it is a powerful tool, with a robust theoretical foundation and, in many situations, can be easily implemented with few assumptions needed about your data.
+
+We will present the code for a bootstrap analysis and a permutation test.
+
+\section*{The data}
+Our data is a sample of 45 observations. Twenty of these are independent and identically distributed counts from one distribution, $f_1$ with mean $\theta_1$, and 25 are independent and identically distributed counts from another distribution, $f_2$ with mean $\theta_2$. We wish to learn about whether the $\theta_1$ and $\theta_2$ are significantly different from one another.  Specifically, we wish to ask the following specific questions:
+\begin{enumerate}
+\item with a type-I error rate of .05, do the two distributions have the same mean?
+\item what is our uncertainty in our estimate of the difference in means between the two distributions?
+\end{enumerate}
+
+<<realData, include=FALSE>>=
+## commands used to generate data
+## y1 <- rnbinom(20, mu=17, size=5)
+## y2 <- rnbinom(25, mu=12, size=2)
+@
+
+The data is as follows
+<<simData>>=
+y1 <- c(22, 20, 9, 19, 5, 15, 18, 23, 5, 14, 
+       13, 12, 15, 18, 20, 22, 31, 23, 19, 31)
+y2 <- c(27, 7, 18, 15, 1, 16, 42, 8, 1, 22, 27, 
+        4, 9, 5, 5, 2, 4, 5, 14, 9, 28, 11, 11, 7, 10)
+@
+
+We can quickly look at our data (since the number of observations is small, we will use a stem and leaf plot) and obtain our estimate of the mean and standard deviation
+<<getMean>>=
+stem(y1)
+stem(y2)
+(mean.1 <- mean(y1))
+(mean.2 <- mean(y2))
+sd(y1)
+sd(y2)
+@
+
+\section*{A permutation test for the difference in means}
+One simple method to compare the difference in means of the distributions is just to look at the difference in the observed means. Using the original data, this is calculated as
+<<origMeanDiff>>=
+(obs.diff <- mean.1-mean.2)
+@
+(Note that putting parentheses around a command prints the new object. Usually, this is performed `silently', but sometimes it is useful to print the result.) 
+
+However, we are interested in weighing the evidence for/against the null hypothesis that the mean of $f_1$ and $f_2$ are the same, i.e. $\theta_1 - \theta_2 = 0$. If the null hypothesis were true, then group assignments shouldn't matter. If we picked 25 of our 45 observations randomly and said they came from $f_2$ and the rest belonged to $f_1$, then our observed mean difference should be close to zero. Our observed difference, \Sexpr{round(obs.diff,2)}, appears to be fairly close to zero, but is it a significant difference? A permutation test can help us answer that question. 
+
+We will randomly permute the group assignments of our data, calculating many possible different groupings of the data. In all of those many groupings, how much of an outlier is our dataset? 
+
+Let's begin by getting our data into a format that will make the resampling easy.
+<<reformatData>>=
+dat <- data.frame(y=c(y1, y2), grp=rep(1:2, times=c(length(y1), length(y2))))
+@
+
+In this format, we can use the {\tt tapply()} function to get a mean by group, and the difference of mean by group. It also lends itself to easy side-by-side graphical comparison.
+<<tapply, fig.width=4, fig.height=3>>=
+with(dat, tapply(y, grp, mean))
+(obs.diff <- diff(with(dat, tapply(y, grp, mean))))
+require(ggplot2)
+qplot(y, data=dat, facets=grp~.)
+@
+
+
+Now, we create a loop to resample the data and a storage vector to store all of the calculated mean differences. We will resample the data 10,000 times and plot the results.
+<<permTest, fig.width=4, fig.height=4>>=
+n.samps <- 10000
+diffs <- rep(NA, n.samps)
+for(i in 1:n.samps){
+        grp.sampled <- sample(dat$grp, size=45, replace=FALSE)
+        diffs[i] <- diff(with(dat, tapply(y, grp.sampled, mean)))
+}
+qplot(diffs, binwidth=.2) + geom_vline(xintercept=obs.diff)
+@
+
+Next, we wish to calculate the p-value for our permutation test. The one-sided p-value corresponds to the probability that an resampled mean difference was less than the observed difference. The two-sided p-value corresponds to the probability that the absolute difference in means was greater than the absolute value of the observed difference (for more explanation on the two-sided test, see the wikipedia page on permutation tests).
+<<pValues>>=
+(p.val.one.side <- sum(diffs<=obs.diff)/n.samps)
+(p.val.two.side <- sum(abs(diffs)>=abs(obs.diff))/n.samps)
+@
+
+
+We can also run a parametric model for the difference in means using R's version  of the familiar t-test. This test assumes normality, which may or may not be a valid assumption for this data:
+<<tTest>>=
+(ttest.results <- t.test(y~grp, data=dat))
+@
+This test gives similar results as the permutation test, although it appears to be a little less conservative (i.e. has a lower p-value).
+
+Based on the permutation test results, we conclude that there is marginal statistical evidence (p=\Sexpr{p.val.two.side}) to suggest that $\theta_1 \neq \theta_2$. 
+
+\section*{Bootstrap confidence interval for the difference in means}
+The mechanics of a bootstrap algorithm are, in many cases, very similar to a permutation test, in that they both utilize resampling. The key conceptual difference between the two methods is that a permutation test can help you test a hypothesis where a bootstrap algorithm can help you characterize your uncertainty in the estimate of a parameter. Additionally, from an operational perspective, a bootstrap sample of your data samples with replacement while a permutation test just shuffles the labels.
+
+Rather than using the test statistics to calculate a p-value, as we did in the permutation test, we will use the estimates of the differences of means ($\theta_1 - \theta_2$) and use the middle p\% of those numbers as the $p$\% confidence interval.
+
+<<bootstrapping, fig.width=4, fig.height=4>>=
+boot.diffs <- rep(NA, n.samps)
+for(i in 1:n.samps){
+        ## note how I sample to ensure that the 20/25 split is maintained
+        boot.sample <- c(sample(20, replace=TRUE), sample(21:45, replace=TRUE))
+        boot.dat <- dat[boot.sample,]
+        boot.diffs[i] <- diff(with(boot.dat, tapply(y, grp, mean)))
+}
+qplot(boot.diffs, binwidth=.2) + geom_vline(xintercept=obs.diff)
+boot.quants <- quantile(boot.diffs, c(.01, .025, .05, .1, .5, .9, .95, .975, .99))
+round(boot.quants, 2)
+@
+
+Note that bootstrapping does not change our point estimate of the estimated difference in means. Based on the quantiles shown above, the bootstrap 95\% confidence interval for the difference in means would be \Sexpr{round(boot.quants[2], 2)} to \Sexpr{round(boot.quants[8], 2)}. As we saw in the permutation test analysis, these results suggest that we have only marginal evidence to suggest that the $\theta_1$ is different from $\theta_2$, or that the two groups have different means.
+
+%Now that you have gotten to the end, I will give you the commands that I used to simulate these two groups of data:
+<<actualData, echo=FALSE>>=
+y1 <- rnbinom(20, mu=17, size=5)
+y2 <- rnbinom(25, mu=12, size=2)
+@
+
+
+\end{document}

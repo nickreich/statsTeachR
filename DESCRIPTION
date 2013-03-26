@@ -1,0 +1,14 @@
+Package: teachr
+Type: Package
+Title: Modules for problem-based lesson plans with R
+Version: 0.1
+Date: 2012-12-06
+Author: Nicholas G. Reich
+Maintainer: Nicholas G. Reich <nick@schoolph.umass.edu>
+Description: This package contains teaching modules for learning statistics
+    using R. Class materials are contained in the inst/ package directory and
+    may be copied to the desired folder on your computer using the
+    module.copy() function.
+License: GPL (>= 2)
+Collate:
+    'module.copy.R'

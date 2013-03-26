@@ -1,0 +1,61 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper, top=1.5cm, left=2cm}                % ... or a4paper or a5paper or ... 
+\usepackage[T1]{fontenc}
+\usepackage[parfill]{parskip}
+
+\renewcommand{\familydefault}{cmss}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=true,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{pdfstartview=FitH}
+\usepackage{breakurl}
+\renewcommand{\familydefault}{cmss}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+
+\title{In-class Data Analysis Module 1: \\ irregular data, permutation tests and simulation}
+\author{PUBHLTH 590F: Intro to Stat Computing and Data Visualization (UMass-Amherst)\\ 
+        Instructor: Nicholas G Reich}
+\date{} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\topfraction}{0.8}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\floatpagefraction}{0.75}
+
+\makeatother
+
+\begin{document}
+
+\SweaveOpts{concordance=TRUE}
+\SweaveOpts{keep.source=TRUE}
+
+\maketitle
+
+
+\section*{In-class collaborative exercise}
+{\bf Goals:} to practice analysis and visualization techniques on irregular data, and to learn about and implement a permutation test for irregular/mixed data.
+
+You have in your Dropbox folder a dataset, permTestExample.rda. This dataset comes from a setting where measurements were collected from individuals in one of two settings. You could think of it as, for example, a count of organisms observed under two conditions. The ``group'' variable indicates which group the observation belongs to. The ``y'' variable represents the count. In more formal statistical terms, you could think of these as samples from two independent and identically distributed samples, where $Y_{1,1}, Y_{1,2}, Y_{1,3} , ..., Y_{1,N_1}$ are the $N_1$ observations from the first group and $Y_{2,1}, Y_{2,2}, Y_{2,3} , ..., Y_{2,N_2}$ are the $N_2$ observations from the second group. We can assume that all of the $Y_{1,i}$ observations follow a common, but unknown distribution. Similarly the $Y_{2,i}$ follow a common, but unknown distribution. Our goal is to compare the observed data from the two groups and draw conclusions about how their distributions are similar or different.
+
+Work through the following tasks, documenting your completed work in a reproducible document (using Sweave or knitr).
+\begin{enumerate}
+\item Draw a random sample (without replacement) of 30 observations from this dataset and save it in your workspace.
+\item Using just this subsample of the complete dataset, explore the data in R. Generate a few summary statistics and plots and describe the data in a few sentences in non-technical language. What does this data look like? Can you hypothesize about what kind of process may have generated data that look this?
+\item {\bf Before running any formal comparison tests}, write down a few methods (at least two) for comparing the two groups that you'd like to run. Justify your choices. Then run those tests.
+\item Briefly discuss the results of your analysis.
+\item Choose one of the tests you just ran and conduct a permutation test to evaluate the robustness of your results.
+\item Briefly discuss the results of the permutation analysis. Do they change your conclusions made above?
+\item Summarize your findings in one paragraph. Your target audience: a statistics professor who has not seen this data nor has read the rest of your report.
+%\item Now, use the large dataset. Run a simulation study to determine the minimum sample size needed to reliably detect a difference between the two groups (if you think one exists). Before you run the study, determine what data structure you will fill as the simulation is running.
+\end{enumerate}
+
+
+
+\end{document}
