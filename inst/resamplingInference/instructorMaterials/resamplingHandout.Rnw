@@ -18,8 +18,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
 
-\title{Resampling in R: an example}
-\author{PUBHLTH 590F: Intro to Stat Computing and Data Visualization (UMass-Amherst)\\ 
+\title{Resampling in R: a data-driven example}
+\author{%PUBHLTH 590F: Intro to Stat Computing and Data Visualization (UMass-Amherst)\\ 
         Instructor: Nicholas G Reich}
 \date{} 
 
@@ -65,6 +65,14 @@ y2 <- c(27, 7, 18, 15, 1, 16, 42, 8, 1, 22, 27,
 @
 
 We can quickly look at our data (since the number of observations is small, we will use a stem and leaf plot) and obtain our estimate of the mean and standard deviation
+\\
+\\
+\\
+\\
+
+
+
+
 <<getMean>>=
 stem(y1)
 stem(y2)
