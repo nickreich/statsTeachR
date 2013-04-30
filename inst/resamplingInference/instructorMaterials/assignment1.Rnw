@@ -18,9 +18,9 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
 
-\title{In-class Data Analysis Module 1: \\ irregular data, permutation tests and simulation}
-\author{PUBHLTH 590F: Intro to Stat Computing and Data Visualization (UMass-Amherst)\\ 
-        Instructor: Nicholas G Reich}
+\title{Resampling Module 1: \\ using resampling inference with irregular data}
+\author{%PUBHLTH 590F: Intro to Stat Computing and Data Visualization (UMass-Amherst)\\ 
+Instructor: Nicholas G Reich}
 \date{} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
@@ -42,7 +42,7 @@
 \section*{In-class collaborative exercise}
 {\bf Goals:} to practice analysis and visualization techniques on irregular data, and to learn about and implement a permutation test for irregular/mixed data.
 
-You have in your Dropbox folder a dataset, permTestExample.rda. This dataset comes from a setting where measurements were collected from individuals in one of two settings. You could think of it as, for example, a count of organisms observed under two conditions. The ``group'' variable indicates which group the observation belongs to. The ``y'' variable represents the count. In more formal statistical terms, you could think of these as samples from two independent and identically distributed samples, where $Y_{1,1}, Y_{1,2}, Y_{1,3} , ..., Y_{1,N_1}$ are the $N_1$ observations from the first group and $Y_{2,1}, Y_{2,2}, Y_{2,3} , ..., Y_{2,N_2}$ are the $N_2$ observations from the second group. We can assume that all of the $Y_{1,i}$ observations follow a common, but unknown distribution. Similarly the $Y_{2,i}$ follow a common, but unknown distribution. Our goal is to compare the observed data from the two groups and draw conclusions about how their distributions are similar or different.
+Load the workspace permTestExample.rda. The dataset in this workspace comes from a setting where measurements were collected from individuals in one of two settings. You could think of it as, for example, a count of organisms observed under two conditions. The ``group'' variable indicates which group the observation belongs to. The ``y'' variable represents the count. In more formal statistical terms, you could think of these as samples from two independent and identically distributed samples, where $Y_{1,1}, Y_{1,2}, Y_{1,3} , ..., Y_{1,N_1}$ are the $N_1$ observations from the first group and $Y_{2,1}, Y_{2,2}, Y_{2,3} , ..., Y_{2,N_2}$ are the $N_2$ observations from the second group. We can assume that all of the $Y_{1,i}$ observations follow a common, but unknown distribution. Similarly the $Y_{2,i}$ follow a common, but unknown distribution. Our goal is to compare the observed data from the two groups and draw conclusions about how their distributions are similar or different.
 
 Work through the following tasks, documenting your completed work in a reproducible document (using Sweave or knitr).
 \begin{enumerate}
