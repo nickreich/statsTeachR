@@ -18,7 +18,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
 
-\title{Resampling Module 1: \\ using resampling inference with irregular data}
+\title{Resampling Task 1: \\ using resampling inference with irregular data}
 \author{%PUBHLTH 590F: Intro to Stat Computing and Data Visualization (UMass-Amherst)\\ 
 Instructor: Nicholas G Reich}
 \date{} 

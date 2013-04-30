@@ -2,5 +2,5 @@ Module: resamplingInference
 Date: 2013-04-30
 Author: Nicholas G Reich <nick@schoolph.umass.edu>
 Description: This module focuses on the basic theory and application of resampling inference, specifically regarding bootstrap confidence intervals and permutation tests. Two independent/group exercises are provided along with a handout that students are expected to read and work through on their own. The exercises also are designed to provide students with experience running non-paramtetric tests on zero-inflated data and on simulating data.
-Keywords: permutation, resampling, simulation, non-parametric tests
+Keywords: permutation, resampling, simulation, non-parametric tests, zero-inflated data
 Level: Graduate
