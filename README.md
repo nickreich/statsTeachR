@@ -1,25 +1,5 @@
-# statsteachr
+# statsTeachR
 
-Modules for problem-based lesson plans with R
+Modules for hands-on teaching statistics using R
 
-# What is statsteachr?
-
-statsteachr is an R package focused on delivering high-quality, classroom-tested lesson plans for classes in statistics and statistical computing. statsteachr is comprised of problem-oriented learning ''modules'' that are ready to be adapted to your classroom setting with (hopefully) minimal retooling on your part. 
-
-# Why use statsteachr?
-
-I am developing statsteachr to faciliate the sharing of problem-oriented statistics curricula and lesson-plans. The vision is to have a standardized repository where statsteachrs can include 'modules'  that they have used to teach R in a classroom setting.
-
-# What is a module?
-
-We use the word ''module'' to refer to a self-contained set of learning exercises. A module might be designed to fit into one 50-minute class period. Or it might be designed with two weeks of in-class exercises and out-of-class assignments. We hope to have a searchable and sortable list of modules available soon. 
-
-# How do I use a module in my class?
-
-
-# How can I contribute a module to statsteachr?
-
-
-# What format does a module need to be in?
-
-
+For more info, please check out the [statsTeachR website](http://statsTeachR.org).
