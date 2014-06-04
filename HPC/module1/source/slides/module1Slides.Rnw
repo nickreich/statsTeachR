@@ -1,0 +1,390 @@
+
+\documentclass[table]{beamer}
+
+
+\input{../standard_knitr_beamer_preamble}
+
+
+%	The following variables are assumed by the standard preamble:
+%	Global variable containing module name:
+\title{Principles and Practice of Reproducible Research with R}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{shortName}
+%	Global variable containing author name:
+\author{Andrea Foulkes, Gregory Matthews, Nicholas Reich}
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{Biostatistics in Practice: Research Training in High-Performance Computing with R}
+
+
+
+%	******	Document body begins here	**********************
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+%	Title page
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+
+
+%	******	Everything through the above line must be placed at
+%		the top of any TeX file using the statsTeachR standard
+%		beamer preamble. 
+
+
+\begin{frame}{Welcome}
+\huge {\sc Biostatistics in Practice (BiP) 2014}: \\
+
+\normalsize 
+\bigskip
+Data Sciences for the Life Sciences in a High Performance Computing Environment
+
+\bigskip
+\scriptsize \emph{Sponsored by the {\bf Graduate Program in Biostatistics at UMass Amherst}, the UMass Institute for Computational Biology, Biostatistics and Bioinformatics (ICB3) and the Massachusetts Green High Performance Computing Center (MGHPCC).}
+\end{frame}
+
+\begin{frame}{Agenda}
+
+\scriptsize{
+\begin{enumerate}
+\item[] \underline{\sc Module 1}: \hfill 9:00AM --10:15AM
+
+{\bf Principles of Reproducible Research}
+  \begin{itemize}
+	\item \scriptsize Brief conceptual overview; Git/GitHub; RMarkdown
+	\end{itemize}
+\bigskip
+\item[] \underline{\sc Module 2}: \hfill 10:45AM -- Noon
+
+{\bf Simulation and Parallel Computing} 
+	\begin{itemize}
+	\item \scriptsize Simulation example with simple linear regression; Performing a permutation test; Running permutation tests in parallel
+	\end{itemize}
+
+\bigskip
+\item[] \underline{\sc Module 3}:  \hfill 1:45PM -- 3:00PM
+
+{\bf Introduction to Cluster Computing}
+\begin{itemize}
+\item \scriptsize VPN and ssh to MGHPCC; Data/code transfer; Parallel vs cluster computing; Submitting jobs (single and distributed)
+\end{itemize}
+
+\bigskip
+\item[] \underline{\sc Module 4}: \hfill 3:30PM  -- 4:45 PM
+
+{\bf Topics in Big Data Sciences}
+\begin{itemize}
+\item \scriptsize Genome wide association data overview; Lab exercise applying workshop material
+\end{itemize}
+
+\end{enumerate}
+}\end{frame}
+
+\begin{frame}{Special Thanks...}
+\begin{itemize}
+\item John Goodhue
+\item Claire Christopherson
+\item Ralph Zottola
+\item Al Ritacco
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Introductions}
+Faculty:
+\begin{itemize}
+\item Dr. Nicholas Reich, Assistant Professor of Biostatistics, UMass Amherst
+\item Dr. Gregory Mathews, Lecturer in Biostatistics, UMass Amherst
+\item Dr. Andrea Foulkes, Associate Professor and Head of Biostatistics, UMass Amherst
+\end{itemize}
+
+\bigskip
+Teaching Assistants:
+\begin{itemize}
+\item Steven Calderbank
+\item Eric Cohen
+\item Stephen Lauer
+\item Sara Nunez
+\item Emily Ramos
+\item Eric Reed
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Principles of Reproducible Research -- Definition}
+\emph{Reproducible research has been defined in the scientific community as published scientific work that can be recreated using code and data made available by the authors:} 
+\begin{itemize}
+\item Creating reproducible research requires authors to carefully document approaches used to process, manage, analyze, and visualize data. 
+\item It also requires authors to have a foundational understanding of the uncertainty that underlies the statistical model they use to describe their data. 
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Principles of Reproducible Research -- A Brief History}
+\begin{itemize}
+\item \scriptsize Roots of reproducible research can be traced to the concept of “literate programming” heralded by Donald Knuth \\
+{\tiny -- Knuth, D. E. (1992). Literate Programming (1st ed.). Center for the Study of Language and Information.}
+\item \scriptsize Concept  operationalized in 2002 by Friederic Leisch with introduction of Sweave, a program that allows the user to weave together R code and natural language descriptions \\
+{\tiny -- Leisch, F. (2002a). Sweave. Dynamic generation of statistical reports using literate data analysis. SFB Adaptive Information Systems and Modelling in Economics and Management Science, WU Vienna University of Economics and Business; Leisch, F. (2002b). Sweave, part I: Mixing R and LaTeX. R News, 2/3, 28–31.
+}
+\item \scriptsize Importance of reproducibility discussed in vast array of fields, from econometrics, epidemiology and biostatistics, bioinformatics, and engineering \\
+{\tiny -- Koenker, R. (1996). Reproducible econometric research. Retrieved September 17, 2012, from: \url{http://www.econ.uiuc.edu/~roger/research/repro/repro.html}; Peng, R. D. (2009). Reproducible research and Biostatistics. Biostatistics, 10(3), 405–408. doi:10.1093/biostatistics/kxp014; Gentleman, R. (2005). Reproducible research: a bioinformatics case study. Statistical applications in genetics and molecular biology, 4, Article2. doi:10.2202/1544-6115.1034; Vandewalle, P., Barrenetxea, G., Jovanovic, I., Ridolfi, A., \& Vetterli, M. (2007). Experiences with Reproducible Research in Various Facets of Signal Processing Research. IEEE International Conference on Acoustics, Speech and Signal Processing. Proceedings, 4, IV–1256. doi:10.1109/ICASSP.2007.367304)}
+\end{itemize} 
+\end{frame}
+
+\begin{frame}{Principles of Reproducible Research -- Training}
+Foundational training in reproducible research includes rigorous instruction in:
+\begin{enumerate}
+\item Analysis and visualization of data through literate programming (Module 1);
+\item Dissemination of open-source and extensible code, documentation, and, whenever possible, data \\ (Modules 1 \& 2);
+\item Basic statistical literacy, including characterization of uncertainty using sound statistical and computational principles (Modules 2, 3 \& 4).
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Tools for reproducible data analysis with R}
+
+\begin{itemize}
+        \item Version control: git \& GitHub.com
+        \item Dynamic documents: knitr, RMarkdown, Sweave
+        \item RStudio
+        \item ggplot2
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Version control systems}
+
+\begin{figure}[t]
+    \includegraphics[width=\textwidth]{figures/VCS/VCS001.jpg}  
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Version control systems}
+
+\begin{figure}[t]
+    \includegraphics[width=\textwidth]{figures/VCS/VCS002.jpg}  
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}{Version control systems}
+
+\begin{block}{Common VCS}
+\begin{itemize}
+\item git
+\item subversion (svn)
+\item mercurial
+\item ...
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{git}
+
+\begin{block}{Key command-line operations}
+\begin{itemize}
+\item {\tt git init}: initializes a repository locally
+\item {\tt git clone}: clones a repository from a remote source (i.e. GitHub.com)
+\item {\tt git add}, {\tt git rm}: manipulating files 
+\item {\tt git commit}: commits changes you have made
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{Version control and reproducibility}
+
+\end{frame}
+
+
+
+\begin{frame}{Dyanamic Documents in R}
+\begin{itemize}
+\item Dynamic R documents allow a user to combine text, R code, and R output, including tables and figures, into one document.
+\item Why is this useful? 
+\begin{itemize}
+\item Writing code and producing reports are now one document rather than many.
+\item When the analysis changes, the results in the report change automatically.  
+\item What else?
+\end{itemize}
+\item There are several options for how to do this.  
+\begin{itemize}
+\item R Markdown
+\item Sweave
+\item knitr
+\end{itemize}
+\end{itemize}
+%``dynamic documents''
+%R markdown
+%Sweave
+%knitr
+\end{frame}
+
+
+\begin{frame}{Dyanamic R Reports: Summary}
+\begin{itemize}
+\item R Markdown: creates HTML document
+\item Sweave: creates pdf document AND incorporates LaTeX
+\item knitr: $\approx$ Sweave + cacheSweave + pgfSweave + weaver + animation::saveLatex + R2HTML::RweaveHTML + highlight::HighlightWeaveLatex + 0.2 * brew + 0.1 * SweaveListingUtils + more
+\end{itemize}
+%``dynamic documents''
+%R markdown
+%Sweave
+%knitr
+\end{frame}
+
+\begin{frame}{R Markdown}
+\begin{itemize}
+\item R Markdown creates HTML files  
+\item Reference: http://www.rstudio.com/ide/docs/authoring/using\_markdown
+\item Markdown files (.Rmd) act just like text files, except they allow a user to embed R code in chunks
+\item The syntax for a chunk in R Markdown:
+\end{itemize}
+Regular text \\
+```\{r\}\\
+Code goes here\\
+```\\
+\end{frame}
+
+\begin{frame}{Sweave}
+\begin{itemize}
+\item Sweave creates pdf files as output
+\item Reference: http://leisch.userweb.mwn.de/Sweave/
+\item Sweave Manual: http://www.stat.uni-muenchen.de/~leisch/Sweave/Sweave-manual.pdf
+\item Sweave not only integrates R code, but also LaTeX!
+\item The syntax for a chunk in Sweave:
+\end{itemize}
+Regular text with \$LaTeX\$ if you want it.\\
+\textless\textless OPTIONS \textgreater\textgreater=\\
+Code goes here\\
+@\\
+\end{frame}
+
+\begin{frame}{Sweave: Options}
+\begin{itemize}
+\item fig=TRUE (or FALSE): This indicates that the code in the chunk will print the figure to the output pdf document
+\item echo=TRUE (or FALSE): Should the R input code be displayed in the output pdf document
+\item eval=TRUE (or FALSE): Should the R input code be evaluated
+\end{itemize}
+%Split and label?
+%reuse code chunks?
+\end{frame}
+
+
+
+\begin{frame}{knitr}
+\begin{itemize}
+\item Created by Ph.D. student Yihui Xie (what have you done?) 
+\item knitr creates pdf files as output.
+\item It also allows the use of LaTeX, like Sweave, whereas R Markown does not.  
+\item Syntax for knitr is largely the same as Sweave.
+\item Xie describes knitr $\approx$ Sweave + cacheSweave + pgfSweave + weaver + animation::saveLatex + R2HTML::RweaveHTML + highlight::HighlightWeaveLatex + 0.2 * brew + 0.1 * SweaveListingUtils + more
+\end{itemize}
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% TEMPLATES FOR STATSTEACHR FORMATTING BELOW HERE  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \begin{frame}{Overview}
+% 
+% 	\begin{block}{Diagnostic Test}
+% 		Tool for deciding on something you want to know --- the true status of some outcome --- based on something you can measure.
+% 
+% 		\begin{itemize}
+% 
+% 			\item{Deciding whether someone has tuberculosis (the outcome) based on the presence or size of a raised swelling (the test) following tuberculin injection.}
+% 
+% 			\item{Deciding whether an infant has phenylketonuria (the outcome) based on the blood level of phenylalanine (the test).}
+% 
+% 			\item{Deciding whether an infant has phenylketonuria (the outcome) based on the odor of the urine (same outcome of interest, different test).}
+% 		\end{itemize}
+% 
+% 	\end{block}
+% 
+% \end{frame}
+% 
+% 
+% 
+% \begin{frame}{The Gold Standard}
+% 
+% In evaluating a test, must compare results to some ``truth''.
+% 
+% This is provided by the best possible test --- the \emph{gold standard} or \emph{criterion standard} test.
+% 
+% \medskip
+% 
+% 	\begin{block}{Why Not Use the Gold Standard?}
+% 
+% 		 May be expensive, invasive, or impractical.
+% 
+% 		\begin{itemize}
+% 
+% 			\item{Gold-standard test for pancreatic cancer involves biopsy of the pancreas;}
+% 			\item{Gold-standard test for Alzheimer's disease is post-mortem brain autopsy.}
+% 
+% 		\end{itemize}
+% 
+% 	\end{block}
+% 
+% \end{frame}
+% 
+% 
+% 
+% \begin{frame}{Sensitivity and Specificity}
+% 
+% \taburulecolor{MainColorMedium}
+% \tabulinesep=1.5ex
+% \begin{tabu} to 1.0\textwidth[r]{X[,L,]X[,L,]}
+% 	\rowcolor{MainColorLight}\strong{Sensitivity}                                                                    	&
+% 	\strong{Specificity}
+% \\
+% 	How good is this test at \textit{detecting cases} of this condition?
+% 	&
+% 	How good is this test at giving a \textit{clean bill of health} to those \textit{without} the condition?
+% \\\hline
+% 	What proportion, of those with the condition, test positive for the condition?
+% 	&
+% 	What proportion, of those without the condition, test negative for the condition?
+% \\\hline
+% 	\vspace{-3ex}\begin{displaymath}\frac{true\ positives}{positives\ in\ population}\end{displaymath}\vspace{-3ex}
+% 	&
+% 	\vspace{-3ex}\begin{displaymath}\frac{true\ negatives}{negatives\ in\ population}\end{displaymath}\vspace{-3ex}
+% \\\hline
+% 	\begin{math}
+% 		Pr(T^{+} \mid D^{+})
+% 	\end{math}
+% 	\newline
+% 	$T^{+}$ --- positive test;\newline
+% 	$D^{+}$ --- disease
+% 	&
+% 	\begin{math}
+% 		Pr(T^{-} \mid D^{-})
+% 	\end{math}
+% 	\newline
+% 	$T^{-}$ --- negative test;\newline
+% 	$D^{+}$ --- no disease
+% \\
+% \end{tabu}
+% 
+% \end{frame}
+
+
+\end{document}

@@ -1,0 +1,403 @@
+%% Module 2 beamer/knitr slides
+%% Biostatistics in Practice workshop, January 2014
+%% Nicholas Reich: nick [at] schoolph.umass.edu
+
+
+\documentclass[table]{beamer}
+
+
+\input{../standard_knitr_beamer_preamble}
+
+%        The following variables are assumed by the standard preamble:
+%	Global variable containing module name:
+\title{Simulation and parallelization in R}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{simPar}
+%	Global variable containing author name:
+\author{Nicholas G Reich, Andrea S Foulkes, Gregory J Matthews}
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{}
+
+%%%%%%%% IMPORTANT -- MUST HAVE [fragile] for some/all frames chunks to have output work correctly. 
+
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+library(knitr)
+opts_chunk$set(fig.path='figure/beamer-',fig.align='center',fig.show='hold',size='footnotesize')
+library(ggplot2)
+theme_set(theme_bw())
+@
+
+
+\begin{frame}[plain]
+        \titlepage
+\end{frame}
+
+
+\begin{frame}{Module learning goals}
+
+        \begin{block}{At the end of this module you should be able to...}
+		
+
+		\begin{itemize}
+
+			\item{Simulate data from a parametric distribution.}
+
+			\item{Formulate a statistical model and simulate data from it.}
+
+			\item{Design and implement a simulation experiment to test a hypothesis.}
+                        
+                        \item{Run simulations in parallel, when appropriate.}
+                        
+		\end{itemize}
+
+	\end{block}
+
+\end{frame}
+
+
+\begin{frame}{What is simulation?}
+
+
+
+        \begin{block}{Definitions}
+        	
+
+		\begin{itemize}
+
+			\item{Broadly: ``The technique of imitating the behaviour of some situation or process (whether economic, military, mechanical, etc.) by means of a suitably analogous situation or apparatus, esp. for the purpose of study or personnel training.'' (from the {\em OED})}
+
+			\item{In science: Creating a model that imitates a physical or biological process.}
+
+        		\item{In statistics: The generation of data from a model using rules of probability.}
+                                                
+		\end{itemize}
+
+	\end{block}
+
+\end{frame}
+
+
+\begin{frame}{Simple examples of simulations}
+
+
+        \begin{itemize}
+
+                \item Drawing pseudo-random numbers from a probability distribution (e.g. proposal distributions, ...).
+                
+                \item Generating data from a specified model (e.g. building a template dataset to test a method, calculating statistical power).
+                
+                \item Resampling existing data (e.g. permutation, bootstrap).
+
+        \end{itemize}
+
+\vskip2em
+
+\end{frame}
+
+
+
+
+\begin{frame}{What simulations have you run?}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{Random number generation in R}
+
+
+\begin{block}{{\tt rnorm()}, {\tt rpois()}, etc...}
+
+Built-in functions for simulating from parametric distributions.
+
+<<paramSim>>=
+y <- rnorm(100, mean=10, sd=5)
+(p <- rpois(5, lambda=25))
+@
+
+<<plotDists, out.width='\\linewidth', echo=FALSE, fig.height=3>>=
+par(mfrow=c(1,2))
+curve(dnorm(x, mean=10, sd=5), -5, 25, ylab="f(x)", las=1, bty="n", main="dnorm(x, mean=10, sd=5)")
+plot(dpois(0:50, lambda=25), type="h", ylab="", las=1, xlab="x", bty="n", main="dpois(x, lambda=25)")
+@
+
+
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Resampling data in R}
+
+\begin{block}{{\tt sample()}}
+
+Base R function for sampling data (with or without replacement).
+<<sample>>=
+p
+sample(p, replace=FALSE)
+sample(p, replace=TRUE)
+@
+
+
+\end{block}
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Generating data from a model}
+
+\begin{block}{A Simple Linear Regression model}
+
+\begin{equation*}
+Y_i  =  \beta_0 + \beta_1 X_i + \epsilon_i
+\end{equation*}
+
+What is needed to simulate data (i.e. $Y_i$) from this model?
+\begin{itemize}
+\item The $X_i$: fixed quantities.
+\item Error distribution: e.g. $\epsilon_i  \stackrel{iid}{\sim}  N(0, \sigma^2)$.
+\item Values for parameters: $\beta_0$, $\beta_1$, $\sigma^2$.
+\end{itemize}
+
+
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Generating data from $Y_i  =  \beta_0 + \beta_1 X_i + \epsilon_i$}
+
+<<simData, tidy=FALSE, fig.height=3.5, message=FALSE>>=
+require(ggplot2)
+n <- 100; b0=4; b1=2; sigma=2     ## define parameters
+x <- runif(n, -10, 10)            ## fix the X's
+eps <- rnorm(n, sd=sigma)         ## simulate the e_i's
+y <- b0 + b1*x + eps              ## compute the y_i's
+qplot(x, y, geom=c("point", "smooth"), method="lm", se=FALSE)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]{Example data: heights of mothers and daughters}
+ Heights of $n=1375$ mothers in the UK under the age of 65 and one of their adult daughters over the age of 18 (collected and organized during the period 1893--1898 by the famous statistician Karl Pearson)
+ 
+ 
+<<showHeights, message=FALSE>>=
+require(alr3)
+data(heights)
+head(heights)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]{Example data: heights of mothers and daughters}
+ 
+<<plotHeights, message=FALSE, fig.height=4, tidy=FALSE>>=
+qplot(Mheight, Dheight, data=heights, col="red", alpha=.5) + 
+        theme(legend.position="none")
+@
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{One way to draw inference about height association}
+
+\begin{block}{Using normality assumptions and simple linear regression}
+
+\begin{equation*}
+Dheight_i  =  \beta_0 + \beta_1 \cdot Mheight_i + \epsilon_i
+\end{equation*}
+
+<<heightLM>>=
+mod1 <- lm(Dheight ~ Mheight, data=heights)
+summary(mod1)$coefficients
+@
+\end{block}
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{Another way to draw inference about height association}
+
+\begin{block}{Using a simulation-based permutation test}
+
+\begin{itemize}
+        \item This can evaluate evidence for/against a null hypothesis.
+        \item We are interested in $H_0: \beta_1=0$, i.e. there is no relationship between heights of mother and daughter.
+        \item The trick: we can easily simulate multiple sets of data that we know have no association!
+        \item All we need is {\tt sample()}.
+\end{itemize}
+
+<<heightSingleResamp>>=
+resampDheight <- sample(heights$Dheight, replace=FALSE)
+@
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Single permutation results}
+
+We can then fit this model
+\begin{equation*}
+Dheight^*_i  =  \beta_0 + \beta_1 \cdot Mheight_i + \epsilon_i
+\end{equation*}
+where $Dheight^*_i$ are the permuted daughter heights. 
+
+This essentially ``generates'' data from the null model:
+\begin{equation*}
+Dheight^*_i  =  \beta_0 + 0 \cdot Mheight_i +\epsilon_i
+\end{equation*}
+<<resampHeightLM>>=
+mod2 <- lm(resampDheight ~ Mheight, data=heights)
+summary(mod2)$coefficients
+@
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Permutation tests require repeated samples!}
+
+\begin{block}{A permutation test algorithm}
+\begin{itemize}
+        \item Run original analysis (i.e. fit our linear model), store $\hat\beta_1$.
+        \item For $i$ in $1, 2,  \dots, N$:
+        \begin{itemize}
+                \item Permute the $Y$s.
+                \item Re-run original analysis, store $\hat\beta_1^{(i)}$.
+        \end{itemize}
+        \item Calculate fraction of the $\hat\beta_1^{(i)}$ as or more ``extreme'' than $\hat\beta_1$
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}{Hands-on exercise}
+
+\begin{itemize}
+\item We have provided code for you to adapt and run a permutation test.
+\item {\tt permTest.Rmd} in BiPSandbox repository.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{}
+
+\begin{block}{Shifting gears from statistics to computation...}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{Parallel computation in R}
+
+\begin{block}{What is parallel computing?}
+\begin{itemize}
+        \item Wikipedia says: ``Parallel computing is a form of computation in which many calculations are carried out simultaneously, operating on the principle that large problems can often be divided into smaller ones, which are then solved concurrently ("in parallel").''
+        \item Not every computational problem is parallelizable!        
+        \item Today, we will focus on problems that are ``embarrassingly parallel'' in nature.
+        \item We will make a distinction between ``local'' and ''distributed'' parallel computing, but these are our loose terminology. 
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+
+
+
+\begin{frame}{Local vs. distributed}
+
+\begin{block}{Local parallelization}
+\begin{itemize}
+\item Within a {\tt .R} script, call multiple cores (on your laptop, on a cluster node, etc...).
+\item Two simple implementations: 
+\begin{itemize}
+        \item {\tt foreach()} requiring {\tt doMC} and {\tt foreach} packages
+        \item {\tt mclapply()} requiring {\tt parallel} package
+\end{itemize}
+\end{itemize}
+\end{block}
+
+\begin{block}{Distributed parallelization}
+\begin{itemize}
+\item Within a {\tt .sh} script, call multiple {\tt .R} files/jobs/scripts to run on separate nodes simultaneously. 
+\item Each individual job could have local parallelization as well.
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{How many cores do you have?}
+
+\begin{itemize}
+\item Simple way to check: 
+<<detectCores, message=FALSE>>=
+require(parallel)
+detectCores()
+@
+\item Caveat 1: \# of cores may be less than the \# of simultaneous computational threads you could run.
+\item Caveat 2: You may not want to eat up all your local CPU with a computational job.
+\end{itemize}
+
+\end{frame}
+
+
+
+
+\begin{frame}{Hands-on exercise}
+
+\begin{itemize}
+\item We have provided code for you to adapt and run a permutation test in parallel: {\tt BiPSandbox/code/permTest\_foreach.R}
+\item Let's try to learn about different parallel computing speeds through an old-school distributed computing experiment: see {\tt BiPSandbox/code/localParallelData.csv}
+\end{itemize}
+
+\end{frame}
+
+
+
+
+\begin{frame}{}
+
+\end{frame}
+
+
+
+
+\begin{frame}{}
+
+\begin{itemize}
+
+\item generate new $Y_i$ from model without $\beta_1$. Either de novo or or from a bootstrap/permutation?
+\item fit model with $\beta_1$
+\item answer questions: how often do CIs for $\beta_1$ not cover zero (or p-val$<$.05)? fit model to real data and compare $\hat\beta_1$ to simulated $\hat\beta_1$s?
+\end{itemize}
+
+\end{frame}
+
+
+
+
+\end{document}

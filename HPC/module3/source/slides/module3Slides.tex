@@ -1,0 +1,270 @@
+%	Use the standard preamble for Beamer slides of all 
+%		statsTeachR modules
+%		(\input, not \include, as \include can't access 
+%		things in higher-level directories since it needs 
+%		write permission there, which it doesn't have; and 
+%		in some settings the preamble may be in a higher-level
+%		directory than the source file.)
+%	This path assumes the preamble is in the parent directory,
+%		modify this if that changes.
+\input{../standard_beamer_preamble}
+
+%	The following variables are assumed by the standard preamble:
+%	Global variable containing module name:
+\title{Cluster Computing}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{shortName}
+%	Global variable containing author name:
+\author{Nicholas G Reich, Andrea S Foulkes, and Gregory J Matthews}
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{}
+
+
+
+%	******	Document body begins here	**********************
+
+\begin{document}
+
+%	Title page
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%	******	Everything through the above line must be placed at
+%		the top of any TeX file using the statsTeachR standard
+%		beamer preamble. 
+\begin{frame}{Overview}
+\begin{itemize}
+\item Parallel computing allows us (for certain problems) to split a big job up into many smaller parts and run them in parallel.  
+\item Our laptops or desktops can split a job up into as many processors as are available.  
+\item This is likely a relatively small number like 4, 8, or 12. 
+ \end{itemize}
+\end{frame}
+
+\begin{frame}{Overview}
+\begin{itemize}
+\item {\bf Cluster computing} connects many computers (nodes) together on a local network. 
+\item This allows a pooling of resources to increase computing power.
+\item This allows a user to access hundreds or even {\it thousands} of cores (if they need them). 
+\end{itemize}
+\end{frame}
+
+\begin{frame}{MGHPCC}
+\begin{itemize}
+\item The Massachusetts Green High Performance Copmputing Cluster (MGHPCC) is one of these clusters.  
+\item Each of the participating instiutions has their own distinct cluster. We will be using the UMass cluster.
+\item In order to connect to this cluster, a user has to be on the UMass campus (or use VPN to the UMass campus.)
+\item We will need to VPN into the UMass network since we are currently off campus.  
+\end{itemize}
+\end{frame}
+
+\begin{frame}{VPN information}
+\begin{itemize}
+\item Server address: vpn2.oit.umass.edu 
+\item Group name: umass
+\item Password: vpn4umass
+\item Account name: bip2014 (temporary for BIP2014)
+\item Password:  (temporary for BIP2014)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Accessing the MGHPCC}
+\begin{itemize}
+\item Register for the MGHPCC (for UMass): https://www.umassrc.org/hpc/
+\item A login and password will be assigned to you. 
+\item This will be different than your UMass IDor email address.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Accessing the MGHPCC}
+\begin{itemize}
+\item Log in with: ssh username@ghpcc06.umassrc.org
+\item Enter password when prompted.  
+\item You are now connected to the cluster!
+\item Remember: You can only access the MGHPCC if you are on UMass's network (physically on campus or VPN)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Transferring Data to MGHPCC}
+\begin{itemize}
+\item Easy ways to do this are with: scp or sftp
+\item You can also use rsync, but this is a bit more complicated.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Transferring Data to MGHPCC: sftp}
+\begin{itemize}
+\item Connect to the MGHPCC using: sftp username@ghpcc06.umassrc.org and enter your password.  
+\item You can not transfer files to the server from your local computer and vice versa.  
+\item The command {\bf put} pulls a file from your local drive to the server.
+\item The command {\bf get} pulls a file from your the server to your local drive.
+\end{itemize}
+{\tt \$ put myData.csv /home/gjm43a/BIP2014}\\
+{\tt \$ get results.csv ~/clusterResults}
+\end{frame}
+
+\begin{frame}{Transferring Data to MGHPCC: scp}
+\begin{itemize}
+\item We can also use the scp command.
+\item This will transfer our files from our local machine to the server. 
+\item Usage is scp [source] [destination]
+\item Running this command will prompt you for your password and then the file will be transferred.  
+\item scp is better than sftp for transferring directories.  
+\end{itemize}
+{\tt \$ scp myData.csv gjm43a@ghpcc06.umassrc.org:/home/gjm43a}\\
+{\tt \$ scp gjm43a@ghpcc06.umassrc.org:/home/gjm43a myData.csv}
+\end{frame}
+
+\begin{frame}{Transferring Data to MGHPCC: scp}
+\begin{itemize}
+\item With scp we can also transfer entire folders.
+\item To do so we use the -r option
+\end{itemize}
+{\tt \$ scp -r /Users/gregorymatthews/Dropbox/BiPSandbox/code gjm43a@ghpcc06.umassrc.org:/home/gjm43a}\\
+{\tt \$ scp -r gjm43a@ghpcc06.umassrc.org:/home/gjm43a/code /Users/gregorymatthews/Dropbox/BiPSandbox}
+\end{frame}
+
+
+
+\begin{frame}{Software}
+\begin{itemize}
+\item Once logged in, you will be placed in your home directory (/home/username). 
+\item Full list of available software: http://wiki.umassrc.org/wiki/index.php/Provided\_Software  
+\item There is a wide array of available software options. 
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Software}
+\begin{itemize}
+\item In order to use software on the server, you'll need to load modules that contain the software.  
+\item We are interested in using R here.  
+\item To load R we use the command: module load R/3.0.1
+\item We can also unload R with the command:  module unload R
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Software}
+\begin{itemize}
+\item Loading the R module will allow us to run R interactively on the MGHPCC servers.  
+\item But this isn't really the best use of the cluster.  
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Batch Mode}
+\begin{itemize}
+\item Rather than running R code interactively, we can also run R in BATCH mode.  
+\item At the command prompt, we submit a job by typing: R CMD BATCH [options] filename.R
+\item But we don't really want to do this either.  
+\item We want to submit batch jobs to the cluster.  
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Submitting jobs to the cluster}
+\begin{itemize}
+\item In order to submit a job to the cluster we need: 
+\begin{itemize}
+\item A R script that we wish to run
+\item A shell script that calls the R script and submits the job to the cluster.  
+\end{itemize}
+\item We will then submit the job to the LSF (Load Sharing Facility) scheduler.  
+\item {\bf Note}: Commands submitted to LSF are just like if they were run from a command prompt. 
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{LSF common commands}
+\begin{itemize}
+\item bsub - submit a job
+\item bkill - kill a job
+\item bjobs - view status of jobs
+\item bpeek - view output / error files
+\item bhist - job history
+\item bqueues - available queues
+\end{itemize}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}{Batch Mode}
+\begin{itemize}
+\item Once we have a .R file that we want to run we can submit it to the LSF job scheduler.  
+\item What actually gets submited to the LSF scheduler is a shell script that calls the R file (which we'll call example.R). 
+\item We need to create a file that contains all of the code we would have run at the shell prompt.  
+\item Example of a shell script is below. We'll call this shell script example.sh
+\end{itemize}
+{\tt \$ module load R/3.0.1 }\\
+{\tt \$ R CMD BATCH --vanilla example.R}\\
+\end{frame}
+
+\begin{frame}{Submiting jobs to the cluster}
+\begin{itemize}
+\item The command {\bf bsub} allows us to submit the shell script to the cluster. 
+\item The command below will submit the shell script example.sh to the cluster.  
+\end{itemize}
+{\tt \$ bsub example.sh}
+\end{frame}
+
+
+\begin{frame}{Submiting jobs to the cluster: Options}
+\begin{itemize}
+\item We can also set many options in our job submission. 
+\item -n: Number of cores requested
+\item -W: Wall clock time
+\item -R: Memory per job
+\item -q: Which queue to submit to
+\end{itemize}
+{\tt \$ bsub -n 4 -R "rusage[mem=2048]" -W 0:10 -q long example.sh}
+\end{frame}
+
+\begin{frame}{Submiting jobs to the cluster: Local}
+\begin{itemize}
+\item An example shell script is below. 
+\item Here we submit to the parallel queue.
+\item Commands to submit is same as before: bsub < example.sh
+\end{itemize}
+{\tt \#!/bin/bash\\
+\#BSUB -R rusage[mem=2048] \# ask for memory\\
+\#BSUB -R span[hosts=1]    \# all the cores on one machine\\
+\#BSUB -W 0:10             \# not sure what this is doing\\
+\#BSUB -q short  \# which queue we want to run in\\
+
+module load R/3.0.1\\
+R CMD BATCH /home/gjm43a/BiP/localParallelPermTest.R}
+\end{frame}
+
+\begin{frame}{Submiting jobs to the cluster: Distributed}
+\begin{itemize}
+\item We can also specify options in the shell script that we submit to the LSF scheduler.  
+\item An example shell script is below. 
+\item Commands to submit: bsub < example.sh
+\end{itemize}
+{\tt \#!/bin/bash\\
+\#BSUB -n 100\\
+\#BSUB -R rusage[mem=2048] \# ask for memory\\
+\#BSUB -W 0:10\\
+\#BSUB -q {\bf parallel}  \# which queue we want to run in
+
+module load R/3.0.1\\
+R CMD BATCH /home/gjm43a/BiP/distrParallelPermTest.R /home/gjm43a/BiP/file1.Rout\\
+R CMD BATCH /home/gjm43a/BiP/distrParallelPermTest.R /home/gjm43a/BiP/file2.Rout\\
+R CMD BATCH /home/gjm43a/BiP/distrParallelPermTest.R /home/gjm43a/BiP/file3.Rout\\
+R CMD BATCH /home/gjm43a/BiP/distrParallelPermTest.R /home/gjm43a/BiP/file4.Rout}
+\end{frame}
+
+
+
+\end{document}
+

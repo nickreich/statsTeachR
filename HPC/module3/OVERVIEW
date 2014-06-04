@@ -1,0 +1,10 @@
+Name: [15 char limit]
+Title: [100 char limit]
+Date: yyyy-mm-dd
+Author: First Last <first.last@school.edu>
+Version: v[1.0]
+Description: [description of the module contents/topics. 250 words. (no carriage returns)
+]
+Keywords: [Up to 10 keywords]
+Depends: [optional, any other modules that this depends on] 
+Suggests: [optional, any other modules that would be suggested to have completed before this one]
