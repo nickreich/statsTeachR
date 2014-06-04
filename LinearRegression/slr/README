@@ -1,0 +1,62 @@
+This module has been lifted from my course materials for Statistical Modeling and Data Visualization, the second course in an applied methodological sequence for graduate students in Biostatistics at UMass-Amherst.
+
+The full course website can be found here:
+http://nickreich.github.io/methods2/
+
+I have pasted in a markdown-based outline for these classes below:
+
+#### Class 2 (Jan 23): Introduction to Regression
+_Activites_
+
+* introduction to ggplot2 (15 min)
+* small groups: establish 5 specific criteria for creating good data visualizations (10 min)
+* big group: consensus criteria (15 min)
+* mini-lecture: introduction to regression (30 min)
+
+_Homework_
+
+* Problem Set 1: Due Thursday, 2/13/2014 (by the beginning of class)
+* Create a short reproducible document (using knitr) that describes the basic structure of a dataset and summarizes some key features of the data using a few key tables and figures. Choose a dataset from [these datasets](http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets) or the ones in the class Google Drive. If your dataset has a lot of variables, focus on a subset of them -- less than 6 or so -- for the purposes of this exercise. Your write-up should answer the following questions:
+  * What is the background/context for this data? 
+  * How many observations are there?
+  * What is the unit of observation?
+  * Is there any missing data? If so, are there patterns to the missingness?
+  * What are the key variables and what do their distributions look like?
+  * Is there a pair of variables that might work well for a Simple Linear Regression? (You don't necessarily need to run one, but you could.)
+  * Are there any obvious outliers in the data?
+
+#### Class 3 (Jan 28): Geometry of regression and least squares
+_Activities_
+
+* homework discussion/questions (10 min)
+* warm-ups (10 min)
+* mini-lecture: least squares and geometry of regression (30 min)
+* lab: OpenIntro Lab 7. (20 min)
+* exercise: Everyone make a guess at minimal RSS after three tries with the plot_ss(). Take averages in groups. Compare to minimal RSS based on summary(lm()) output.
+
+_Homework_
+
+* Problem Set 1: Due Thursday, 2/13/2014 (by the beginning of class)
+* Add one or two simple linear regressions to your dataset write-up. 
+* Finish OpenIntro Lab 7.
+* Install the HSAUR2 package, read up on and explore the BtheB dataset (hint: ``?BtheB``). Be prepared to describe the dataset and answer questions about it in next class.
+
+#### Class 4 (Jan 30): Hands-on SLR practice 
+_Activities_
+
+* warm-ups (10 min)
+* introductions (5 min)
+* OpenIntro lab 7 questions (5 min)
+* More dataset descriptions/results, including BtheB (5 min)
+* small groups: Formulate and fit a reasonable SLR model to BtheB dataset. (30 min)
+* whole class: Present regressions. Talk about different model formulations and results. (15 min)
+
+_Homework_
+
+* Problem Set 1: Due Thursday, 2/13/2014 (by the beginning of class)
+* In your small groups, create a write-up for a simple analysis of the BtheB dataset. Each group should create a repository on GitHub for their analysis. The .Rnw or .Rmd file that you use should be in that repository and every member of the group should have at least one commit or push to the repository before the next class. (You should not commit any additional files, like the .aux files from LaTeX compiling, just the files that are needed to comile your analysis.) Here is a minimal list of things that should be included in your write-up. I encourage you to push beyond just this list, however. 
+  * A few sentences of background/context for the BtheB dataset.
+  * A quantitative and/or visual description of what variables you chose to use for your analysis, along with a hypothesis (or two) that you will be testing.
+  * A description of the characteristics of the missing data (including a figure if needed) and a statement and justification as to whether your group is concerned about the missingness having an impact on your analysis.
+  * Results, with interpretation, of output from an SLR model. We haven't discussed yet using binary predictors or X variables, but feel free to include them. The interpretation is very similar. "For a one unit change in X, ..."
+* Read [this description](http://nicercode.github.io/guides/functions/) of how to write and use functions in R.

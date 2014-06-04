@@ -1,0 +1,333 @@
+%% beamer/knitr slides 
+%% for Statistical Modeling and Data Visualization course @ UMass
+%% Nicholas Reich: nick [at] schoolph.umass.edu
+
+
+\documentclass[table]{beamer}
+
+
+\input{../standard_knitr_beamer_preamble}
+
+%        The following variables are assumed by the standard preamble:
+%        Global variable containing module name:
+
+\title{Multiple Linear Regression: \\ Notation and Estimation}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{multRegression}
+%	Global variable containing author name:
+\author{Nicholas G Reich, Jeff Goldsmith}
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{}
+
+
+\input{../shortcuts}
+
+\hypersetup{colorlinks,linkcolor=,urlcolor=MainColor}
+
+
+%	******	Document body begins here	**********************
+
+\begin{document}
+
+%	Title page
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%	******	Everything through the above line must be placed at
+%		the top of any TeX file using the statsTeachR standard
+%		beamer preamble. 
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Multiple linear regression model}
+
+\bi
+	\myitem Observe data $(y_i, x_{i1}, \ldots, x_{ip})$ for subjects $1, \ldots, n$. Want to estimate $\beta_0, \beta_1, \ldots, \beta_p$ in the model
+	$$ y_i = \beta_0 + \beta_1x_{i1} + \ldots + \beta_1x_{ip} + \epsilon_i; \mbox{ } \epsilon_i \stackrel{iid}{\sim} (0,\sigma^2)$$
+	\myitem Assumptions (residuals have mean zero, constant variance, are independent) are as in SLR
+	\myitem Impose linearity which (as in the SLR) is a big assumption
+	\myitem Our primary interest will be $E(y | \bx)$
+	\myitem Eventually estimate model parameters using least squares
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Omitted variable bias}
+
+What happens if the true regression model is
+$$ y_i = \beta_0 + \beta_1 x_{i,1} + \beta_2 x_{i,2} + \epsilon_i$$
+but  we ignore $x_2$ and fit the simple linear regression
+$$ y_i = \beta^{*}_0 + \beta^{*}_1 x_{i,1} + \epsilon^{*}_i$$
+
+Does $\beta^{*}_1 = \beta_{1}$? 
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Omitted variable bias}
+
+\begin{block}{When should you be concerned?}
+If both of the following conditions are met, then  $\beta^{*}_1 = \beta_1$:
+\bi
+        \myitem The omitted variable is unrelated to the outcome
+	\myitem The omitted variable is uncorrelated with the retained variable
+\ei
+\end{block}
+
+{\bf Extra credit for problem set 1}: create a simulation where you show an example of omitted variable bias. 
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Matrix notation}
+
+\bi
+        \myitem Observe data $(y_i, x_{i1}, \ldots, x_{ip})$ for subjects $1, \ldots, n$. Want to estimate $\beta_0, \beta_1, \ldots, \beta_p$ in the model
+	$$ y_i = \beta_0 + \beta_1x_{i1} + \ldots + \beta_1x_{ip} + \epsilon_i; \mbox{ } \epsilon_i \stackrel{iid}{\sim} (0,\sigma^2)$$
+	\myitem Notation is cumbersome. To fix this, let
+	\bi
+		\myitem $\bx_i = [1, x_{i1}, \ldots, x_{ip}]$
+		\myitem $\bbeta^{T} = [\beta_0, \beta_1, \ldots, \bbeta_{p}]$
+		\myitem Then $y_i = \bx_i \bbeta + \epsilon_i$
+	\ei
+\ei
+
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Multiple linear regressoion}
+
+\bi
+        \myitem Let
+	\begin{displaymath}\tiny
+	\by = \left[
+		\begin{array}{c}
+		y_1 \\
+		\vdots \\
+		y_n \\
+		\end{array}
+    		\right],\quad
+	\bX = \left[
+		\begin{array}{cccc}
+		1 & x_{11} & \hdots & x_{1p} \\
+		\vdots & \vdots & x_{ij} & \vdots \\
+		1 & x_{n1} & \hdots & x_{np} \\
+		\end{array}
+		\right], \quad
+	\bbeta = \left[
+		\begin{array}{c}
+		\beta_0 \\
+		\vdots \\
+		\beta_p \\
+		\end{array}
+		\right], \quad
+         \bepsilon = \left[
+		\begin{array}{c}
+		\epsilon_1 \\
+		\vdots \\
+		\epsilon_n \\
+		\end{array}
+		\right]
+	\end{displaymath}
+	\bigskip
+	\myitem Then we can write the model in a more compact form:
+	$${\by}_{n \times 1} = {\bX}_{n \times (p+1)}{\bbeta}_{(p+1) \times 1} + {\bepsilon}_{n \times 1}$$
+	\myitem $\bX$ is called the \emph{design matrix}
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Matrix notation}
+
+$$\by = \bX\bbeta + \bepsilon$$
+
+\bi
+	\myitem $\epsilon$ is a random vector rather than a random variable
+	\bigskip
+	\myitem $E(\bepsilon) = 0$ and $Cov(\bepsilon) = \sigma^2I$
+	\bigskip
+	\myitem Note that $Cov$ means the ``variance-covariance matrix''
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Mean, variance and covariance of a random vector}
+
+\bi
+	\myitem Let $\by^{T} = [y_1,\ldots,y_n]$ be an $n$-component random vector. Then its mean and variance are defined as
+	\beqa
+		E(\by)^{T} &=& [E(y_1),\ldots,E(y_n)] \\
+		Var(\by) &=& E\left[(\by - E\by)(\by - E\by)^T\right] = E(\by\by^T) - (E\by)(E\by)^T
+    	\eeqa
+	\bigskip
+	\myitem Let $\by$ and $\bz$ be an $n$-component and an $m$-component random vector respectively. Then their covariance is an $n\times m$ matrix defined by
+	\beqa
+		Cov(\by,\bz) = E\big[(\by - E\by)(\bz - \bz)^T\big]
+	\eeqa
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Least squares}
+
+As in simple linear regression, we want to find the $\bbeta$ that minimizes the residual sum of squares.
+$$RSS(\bbeta) = \sum_i \epsilon_i ^2 = \epsilon ^T \epsilon$$
+\vskip2em
+
+After taking the derivative, setting equal to zero, we obtain:
+$$\hat \bbeta = (\bX^{T}\bX)^{-1}\bX ^T \by$$
+
+
+
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Sampling distribution of $\hat{\bbeta}$}
+
+If our usual assumptions are satisfied and $\epsilon \stackrel{iid}{\sim} \N{0}{\sigma^2}$ then 
+$$\hat{\bbeta} \sim \N{\bbeta}{\sigma^2 (\bX^{T}\bX)^{-1}}.$$
+
+\bi
+        \myitem This will be used later for inference.
+	\myitem Even without Normal errors, asymptotic Normality of LSEs is possible under reasonable assumptions.
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Definitions}
+
+\bi
+	\myitem {\it Fitted values}: $\hat{\by} = \bX \hat{\bbeta} = \bX(\bX^{T}\bX)^{-1}\bX^T \by = \bH \by$
+	\myitem {\it Residuals / estimated errors}: $\hat{\bepsilon} = \by - \hat{\by}$
+	\myitem {\it Residual sum of squares}: $\sum_{i = 1}^{n} \hat{\epsilon_i}^2 = \hat{\bepsilon}^{T}\hat{\bepsilon}$
+	\myitem {\it Residual variance}: $\hat{\sigma^2} = \frac{RSS}{n-p-1}$
+	\myitem {\it Degrees of freedom}: $n - p - 1$
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{$R^2$ and sums of squares}
+
+\bi
+	\myitem Regression sum of squares $SS_{reg} = \sum (\hat{y}_i -\bar{y})^2$
+	\myitem Residual sum of squares $SS_{res} = \sum (y_i - \hat{y}_i)^2$
+	\myitem Total sum of squares $SS_{tot} = \sum (y_i - \bar{y})^2$
+	\myitem Coefficient of determination
+	$$ R^2 = 1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}= \frac{\sum (\hat{y}_i -\bar{y})^2}{\sum (y_i - \bar{y})^2}$$
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Hat matrix}
+
+Some properties of the hat matrix:
+\bi
+	\myitem It is a projection matrix: $\bH \bH = \bH$
+	\myitem It is symmetric: $\bH^{T} = \bH$
+	\myitem The residuals are $\hat{\epsilon} = (\bI - \bH) \by$
+	\myitem The inner product of $(\bI - \bH) \by$ and $\bH \by$ is zero (predicted values and residuals are uncorrelated).
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{Projection space interpretation}
+
+The hat matrix projects $\by$ onto the column space of $\bX$. Alternatively, minimizing the $RSS(\bbeta)$ is equivalent to minimizing the Euclidean distance between $\by$ and the column space of $\bX$.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Lung Data Example (con't from last clas)}
+
+<<loadData, echo=FALSE>>=
+dat <- read.table("../../data/lungc.txt", header=TRUE)
+@
+
+
+<<lungMLR, tidy=FALSE>>=
+mlr2 <- lm(disease ~ crowding + education + airqual, 
+           data=dat, x=TRUE, y=TRUE)
+X = mlr2$x
+y = mlr2$y
+(betaHat = solve( t(X) %*% X) %*% t(X) %*% y )
+coef(mlr2)
+@
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Today's big ideas}
+
+\bi
+        \myitem Multiple linear regression models, interpretation, notation, biases
+\ei
+
+\end{frame}
+
+
+
+
+\end{document}

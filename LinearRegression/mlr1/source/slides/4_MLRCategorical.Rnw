@@ -1,0 +1,296 @@
+%% beamer/knitr slides 
+%% for Statistical Modeling and Data Visualization course @ UMass
+%% Nicholas Reich: nick [at] schoolph.umass.edu
+
+
+\documentclass[table]{beamer}
+
+
+\input{../standard_knitr_beamer_preamble}
+
+%        The following variables are assumed by the standard preamble:
+%        Global variable containing module name:
+
+\title{Multiple Linear Regression: \\ Categorical Predictors}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{multRegression}
+%	Global variable containing author name:
+\author{Nicholas G Reich, Jeff Goldsmith}
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{}
+
+
+\input{../shortcuts}
+\usepackage{bbm}
+
+\hypersetup{colorlinks,linkcolor=,urlcolor=MainColor}
+
+
+%	******	Document body begins here	**********************
+
+\begin{document}
+
+%	Title page
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%	******	Everything through the above line must be placed at
+%		the top of any TeX file using the statsTeachR standard
+%		beamer preamble. 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Multiple Linear Regression: recapping model definition}
+
+
+\begin{block}{In matrix notation...}
+$$\by = \bX\bbeta + \bepsilon$$
+
+where  $E(\bepsilon) = 0$ and $Cov(\bepsilon) = \sigma^2I$
+\end{block}
+
+\bigskip
+
+\hrulefill
+
+\bigskip
+
+\begin{block}{In individual observation notation...}
+$$ y_i = \beta_0 + \beta_1x_{1,i} + \ldots + \beta_p x_{p,i} + \epsilon_i$$
+where $\epsilon_i \stackrel{iid}{\sim} (0,\sigma^2)$
+\end{block}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Categorical predictors}
+
+\bi
+	\myitem Assume $X$ is a categorical / nominal / factor variable with $k$ levels
+	\myitem With only one categorical $X$, we have classic one-way ANOVA design
+	\myitem Can't use a single predictor with levels $1, 2, \ldots, K$ -- this has the wrong interpretation
+	\myitem Need to create {\it indicator} or {\it dummy} variables
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Indicator variables}
+
+\bi
+	\myitem Let $x$ be a categorical variable with $k$ levels (e.g. with $k=3$ ``low'', ``med'', ``hi'').
+        \myitem Choose one group as the baseline (e.g. ``low'')
+	\myitem Create $(k-1)$ binary terms to include in the model:
+\begin{eqnarray*}
+        x_{1,i} & = & \mathbbm{1} (x_i=\mbox{``med''}) \\
+        x_{2,i} & = & \mathbbm{1} (x_i=\mbox{``hi''}) 
+\end{eqnarray*}
+	\myitem For a model with no additional predictors, pose the model 
+	$$ y_i = \beta_0 + \beta_1 x_{1,i} + \ldots + \beta_{k-1} x_{k-1,i} + \epsilon_{i}$$
+	and estimate parameters using least squares
+	\myitem Note distinction between {\it predictors} and {\it terms}
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Categorical predictor design matrix}
+
+Which of the following is a ``correct" design matrix for a categorical predictor with 3 levels?
+
+\begin{displaymath}\tiny
+	\bX_1 = \left[
+		\begin{array}{cccc}
+		1 & 1 & 0 & 0 \\
+		\vdots & \vdots & \vdots & \vdots \\
+		1 & 1 & 0 & 0 \\
+		1 & 0 & 1 & 0 \\
+		\vdots & \vdots & \vdots & \vdots \\
+		1 & 0 & 1 & 0 \\
+		1 & 0 & 0 & 1 \\
+		\vdots & \vdots & \vdots & \vdots \\
+		1 & 0 & 0 & 1 \\
+		\end{array}
+		\right] \quad \mbox{or} \quad
+	\bX_2 = \left[
+		\begin{array}{ccc}
+		1 & 0 & 0 \\
+		\vdots  & \vdots & \vdots \\
+		1 & 0 & 0 \\
+		1 & 1 & 0 \\
+		\vdots & \vdots & \vdots \\
+		1 & 1 & 0 \\
+		1 & 0 & 1 \\
+		\vdots & \vdots & \vdots \\
+		1 & 0 & 1 \\
+		\end{array}
+		\right] \quad \mbox{or} \quad
+	\bX_3 = \left[
+		\begin{array}{ccc}
+		1 & 0 & 0 \\
+		\vdots  & \vdots & \vdots \\
+		1 & 0 & 0 \\
+		0 & 1 & 0 \\
+		\vdots & \vdots & \vdots \\
+		0 & 1 & 0 \\
+		0 & 0 & 1 \\
+		\vdots & \vdots & \vdots \\
+		0 & 0 & 1 \\
+		\end{array}
+		\right] \quad
+	\end{displaymath}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{ANOVA model interpretation}
+
+Using the model $ y_i = \beta_0 + \beta_1 x_{1,i} + \ldots + \beta_{k-1} x_{k-1,i} + \epsilon_{i}$, interpret
+
+\bigskip
+
+$\beta_0 = $
+
+\vspace{1.5cm}
+
+$\beta_1 = $
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{Equivalent model}
+
+Define the model $y_i = \beta_1 x_{i1} + \ldots + \beta_{k} x_{i, k} + \epsilon_{i}$ where there are indicators for each possible group
+
+\bigskip
+
+$\beta_1 = $
+
+\vspace{1.5cm}
+
+$\beta_2 = $
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Categorical predictor example: lung data}
+
+<<loadData, echo=FALSE, message=FALSE>>=
+dat <- read.table("../../data/lungc.txt", header=TRUE)
+require(ggplot2)
+theme_set(theme_bw())
+@
+
+
+<<lungMLREducCat, tidy=FALSE, message=FALSE, fig.height=4>>=
+qplot(factor(education), disease, geom="boxplot", data=dat)
+@ 
+ 
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Categorical predictor example: lung data}
+
+$$ dis_i = \beta_0 + \beta_1 educ_{6,i} + \beta_2 educ_{7,i} + \dots + \beta_{14} educ_{14,i} $$
+
+\small
+<<lungMLRCategorical, tidy=FALSE>>=
+mlr7 <- lm(disease ~ factor(education), data=dat)
+summary(mlr7)$coef
+@
+ 
+ 
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Categorical predictor releveling}
+
+
+$$ dis_i = \beta_0 + \beta_1 educ_{5,i} + \beta_2 educ_{6,i} + \beta_1 educ_{7,i} + \beta_2 educ_{9,i} + \dots + \beta_{14} educ_{14,i} $$
+
+\small
+<<lungMLRRelevel, tidy=FALSE>>=
+dat$educ_new <- relevel(factor(dat$education), ref="8") 
+mlr8 <- lm(disease ~ educ_new, data=dat)
+summary(mlr8)$coef
+@
+ 
+ 
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Categorical predictor: no baseline group}
+
+$$ dis_i = \beta_1 educ_{5,i} + \beta_2 educ_{6,i} + \dots + \beta_{14} educ_{14,i} $$
+
+\small
+<<lungMLRNoBaseline, tidy=FALSE>>=
+mlr9 <- lm(disease ~ factor(education) - 1, data=dat)
+summary(mlr9)$coef
+@
+ 
+ 
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]{Creating categories using {\tt cut()}}
+
+$$ dis_i = \beta_1 educ_{low,i} + \beta_2 educ_{med,i} + \dots + \beta_{14} educ_{hi,i} $$
+
+\small
+<<cut, tidy=FALSE, fig.height=2>>=
+dat$educ_3cat <- cut(dat$education, breaks=3, 
+                     labels=c("low", "med", "hi"))
+mlr10 <- lm(disease ~ educ_3cat - 1, data=dat)
+coef(mlr10)
+qplot(educ_3cat, disease, geom="boxplot", data=dat)
+@
+ 
+ 
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Today's big ideas}
+
+\bi
+        \myitem Multiple linear regression: categorical variables
+\ei
+
+\end{frame}
+
+
+
+
+\end{document}

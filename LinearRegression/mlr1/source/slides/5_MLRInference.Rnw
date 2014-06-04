@@ -1,0 +1,458 @@
+%% beamer/knitr slides 
+%% for Statistical Modeling and Data Visualization course @ UMass
+%% Nicholas Reich: nick [at] schoolph.umass.edu
+
+
+\documentclass[table]{beamer}
+
+
+\input{../standard_knitr_beamer_preamble}
+
+%        The following variables are assumed by the standard preamble:
+%        Global variable containing module name:
+
+\title{Multiple Linear Regression: \\ Categorical Predictors}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{multRegression}
+%	Global variable containing author name:
+\author{Nicholas G Reich, Jeff Goldsmith}
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{}
+
+
+\input{../shortcuts}
+\usepackage{bbm}
+
+\hypersetup{colorlinks,linkcolor=,urlcolor=MainColor}
+
+
+%	******	Document body begins here	**********************
+
+\begin{document}
+
+%	Title page
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%	******	Everything through the above line must be placed at
+%		the top of any TeX file using the statsTeachR standard
+%		beamer preamble. 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% acutal slides
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Today's Lecture}
+
+\bi
+        \myitem Sampling distribution of $\hat{\bbeta}$
+	\myitem Confidence intervals
+	\myitem Hypothesis tests for individual coefficients
+	\myitem Global tests
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Circle of Life}
+
+\begin{figure}[t]
+    \includegraphics[width=.8\textwidth]{Figs/CircleOfLife.pdf}  
+\end{figure}
+
+\end{frame} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Statistical inference}
+
+\bi
+	\myitem We have LSEs $\hat{\beta}_0, \hat{\beta}_1, \ldots$; we want to know what this tells us about $\beta_0, \beta_1, \ldots$.
+	\myitem Two basic tools are confidence intervals and hypothesis tests
+	\bi
+		\item Confidence intervals provide a plausible range of values for the parameter of interest based on the observed data
+		\item Hypothesis tests ask how probable are the data we gathered under a null hypothesis about the data generating distribution
+	\ei
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Motivation}
+
+<<loadData, echo=FALSE, message=FALSE>>=
+dat <- read.table("../../data/lungc.txt", header=TRUE)
+require(ggplot2)
+theme_set(theme_bw())
+@
+
+How can we draw {\em \bf inference} about each of these parameters and relationships that our model is encoding?
+
+\small
+<<lungMLRCategorical, tidy=FALSE>>=
+mlr1 <- lm(disease ~ airqual + crowding + nutrition + smoking, data=dat)
+summary(mlr1)$coef
+@
+ 
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Motivation}
+
+\bi
+        \myitem Can we say anything about whether the effect of \texttt{airquality} is ``significant" after adjusting for other variables?
+        \myitem Can we say whether adding \texttt{airquality} improves the fit of our model?
+	\myitem Can we compare this model to a model with only \texttt{crowding}, \texttt{nutrition} and \texttt{smoking}?
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Sampling distribution}
+
+If our usual assumptions are satisfied and $\epsilon \stackrel{iid}{\sim} \N{0}{\sigma^2}$ then 
+$$\hat{\bbeta} \sim \N{\bbeta}{\sigma^2 (\bX^{T}\bX)^{-1}}.$$
+$$\hat{\beta}_j \sim \N{\bbeta}{\sigma^2 (\bX^{T}\bX)_{jj}^{-1}}.$$
+
+\bi
+        \myitem This will be used later for inference.
+	\myitem Even without Normal errors, asymptotic Normality of LSEs is possible under reasonable assumptions.
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Sampling distribution}
+
+For real data we have to estimate $\sigma^2$ as well as $\bbeta$.
+\bi
+	\myitem Recall our estimate of the error variance is 
+		$$\hat{\sigma^2} = \frac{RSS}{n-p-1} = \frac{\sum_i (y_i - \hat{y}_i)^2}{n-p-1}$$
+	\myitem With Normally distributed errors, it can be shown that 
+		$$(n-p-1)\frac{\hat{\sigma^2}}{\sigma^2} \sim \chi^{2}_{n-p-1}$$
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Testing procedure}
+
+Calculate the probability of the observed data (or more extreme data) under a null hypothesis.
+\bi
+	\myitem Often $H_{0}: \beta_1 = 0$ and $H_{a}:\beta_1 \neq 0$
+	\myitem Set type I error rate $\alpha = P(\mbox{falsely rejecting a true null hypothesis})$ 
+	\myitem Calculate a test statistic assuming the null hypothesis is true
+	\myitem Compute a p-value = 
+		$$P(\mbox{As or more extreme test statistic}|H_{0})$$
+	\myitem Reject or fail to reject $H_0$
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Individual coefficients}
+
+For individual coefficients
+\bi
+	\myitem We can use the test statistic 
+		$$T = \frac{\hat{\beta}_j - \beta_j}{\widehat{se}(\hat{\beta}_j)}
+		  = \frac{\hat{\beta}_j - \beta_j}{\sqrt{ \hat{\sigma}^2 (\bX^{T}\bX)_{jj}^{-1} }} \sim t_{n-p-1}$$
+	\myitem For a two-sided test of size $\alpha$, we reject if 
+		$$ |T| > t_{1-\alpha/2, n-p-1}$$
+	\myitem The p-value gives $P(t_{n-p-1} > T_{obs} | H_{0})$
+\ei
+Note that $t$ is a symmetric distribution that converges to a Normal as $n-p-1$ increses.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Back to the example}
+
+\scriptsize
+<<lungMLRTesting, tidy=FALSE>>=
+summary(mlr1)
+@
+ 
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Individual coefficients: CIs}
+
+Alternatively, we can construct a confidence interval for $\beta_j$
+\bi
+        \myitem A confidence interval with coverage $(1-\alpha)$ is given by
+		$$\beta_j \pm t_{1-\alpha/2, n-p-1} \widehat{se}(\hat{\beta}_j)$$
+	\myitem Assuming all the standard assumptions hold, 
+		$$(1-\alpha) = P(LB < \beta_j < UB)$$
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Back to the example}
+
+<<lungMLRConfInt, tidy=FALSE>>=
+cbind(coef(mlr1), confint(mlr1))
+@
+ 
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Inference for linear combinations}
+
+Sometimes we are interested in making claims about $c^{T}\bbeta$ for some $c$.
+\bi
+        \myitem Define $H_{0}: c^{T}\bbeta = c^{T}\bbeta_{0}$ or $H_{0}: c^{T}\bbeta = 0$
+	\myitem We can use the test statistic 
+		$$T = \frac{c^{T}\hat{\bbeta} - c^{T}\bbeta}{\widehat{se}(c^{T}\hat{\bbeta})}
+		  = \frac{c^{T}\hat{\bbeta} - c^{T}\bbeta}{\sqrt{ \hat{\sigma}^2 c^{T}(\bX^{T}\bX)^{-1}c }}$$
+	\myitem This test statistic is asymptotically Normally distributed
+	\myitem For a two-sided test of size $\alpha$, we reject if
+		$$ |T| > z_{1-\alpha/2}$$
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Inference about multiple coefficients}
+
+Our model contains multiple parameters; often we want to perform multiple tests:
+\beqa
+	H_{01} : \beta_1 & = & 0\\
+	H_{02} : \beta_2 & = & 0\\
+	\vdots & = & \vdots \\	
+	H_{0k} : \beta_k & = & 0\\
+\eeqa
+where each test has a size of $\alpha$
+\bi
+	\myitem For any individual test, $P(\mbox{reject } H_{0i} | H_{0i}) = \alpha$
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{Inference about multiple coefficients}
+
+What about 
+$$P(\mbox{reject at least one } H_{0i} | \mbox{all } H_{0i} \mbox{are true}) = \alpha$$
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Family-wise error rate}
+
+To calculate the FWER
+\bi
+	\myitem First note $P(\mbox{no rejections} | \mbox{all } H_{0i} \mbox{are true}) = (1-\alpha)^{k}$
+	\myitem It follows that
+	\beqa
+		\mbox{FWER}  & = & P(\mbox{at least one rejection} | \mbox{all } H_{0i} \mbox{are true}) \\
+                & = &  1 - (1-\alpha)^{k}
+	\eeqa
+\ei
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Family-wise error rate}
+
+$$ \mbox{FWER} = 1 - (1-\alpha)^{k}$$ 
+\scriptsize
+<<FWERPlot, fig.height=3.5>>=
+alpha <- .05
+k <- 1:100
+FWER <- 1-(1-alpha)^k
+qplot(k, FWER, geom="line") + geom_hline(yintercept = 1, lty=2)
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Addressing multiple comparisons}
+
+Three general approaches
+\bi
+	\myitem Do nothing in a reasonable way
+	\bi
+		\item Don't trust scientifically implausible results
+		\item Don't over-emphasize isolated findings
+	\ei
+	\myitem Correct for multiple comparisons
+	\bi
+		\item Often, use the Bonferroni correction and use $\alpha_i = \alpha /k$ for each test
+		\item Thanks to the Bonferroni inequality, this gives an overall $FWER \leq \alpha$
+	\ei
+	\myitem Use a global test
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Global tests}
+
+Compare a smaller ``null" model to a larger ``alternative" model
+\bi
+	\myitem Smaller model must be nested in the larger model
+	\myitem That is, the smaller model must be a special case of the larger model
+	\myitem For both models, the $RSS$ gives a general idea about how well the model is fitting
+	\myitem In particular, something like 
+		$$\frac{RSS_{S} - RSS_{L}}{RSS_{L}}$$
+	compares the relative $RSS$ of the models
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Nested models}
+
+\bi
+	\myitem These models are nested:
+	\beqa
+		\mbox{Smaller} & = & \mbox{Regression of } Y \mbox{ on } X_1 \\
+		\mbox{Larger} & = & \mbox{Regression of } Y \mbox{ on } X_1, X_2, X_3, X_4
+	\eeqa
+	\myitem These models are not:
+	\beqa
+		\mbox{Smaller} & = & \mbox{Regression of } Y \mbox{ on } X_2 \\
+		\mbox{Larger} & = & \mbox{Regression of } Y \mbox{ on } X_1, X_3
+	\eeqa
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Global $F$ tests}
+
+\bi
+	\myitem Compute the test statistic 
+		$$F_{obs} = \frac{(RSS_{S} - RSS_{L})/(df_{S} - df_{L})}{RSS_{L}/df_{L}}$$
+	\myitem If $H_{0}$ (the null model) is true, then $F_{obs} \sim F_{df_{S} - df_{L}, df_{L}}$
+	\myitem Note $df_s = n -p_{S} -1$ and $df_{L} = n - p_{L} - 1$
+	\myitem We reject the null hypothesis if the p-value is above $\alpha$, where
+		$$\mbox{p-value} = P(F_{df_{S} - df_{L}, df_{L}} > F_{obs}) $$
+	
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Global $F$ tests}
+
+There are a couple of important special cases for the $F$ test
+\bi
+	\myitem The null model contains the intercept only
+	\bi
+		\item When people say ANOVA, this is often what they mean (although all $F$ tests are based on an analysis of variance)
+	\ei
+	\myitem The null model and the alternative model differ only by one term
+	\bi
+		\item Gives a way of testing for a single coefficient
+		\item Turns out to be equivalent to a two-sided $t$-test: $t^{2}_{df_{L}} \sim F_{1, df_{L}}$
+	\ei	
+\ei
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Lung data: multiple coefficients simultaneously}
+
+You can test multiple coefficients simultaneously using the $F$ test
+
+\scriptsize
+<<MLRmultcoef>>=
+mlr_null <- lm(disease ~ nutrition, data=dat)
+mlr1 <- lm(disease ~ nutrition+ airqual + crowding + smoking, data=dat)
+anova(mlr_null, mlr1)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Lung data: single coefficient test}
+
+The $F$ test is equivalent to the $t$ test when there's only one parameter of interest
+
+\scriptsize
+<<MLRsinglecoef>>=
+mlr_null <- lm(disease ~ nutrition, data=dat)
+mlr1 <- lm(disease ~ nutrition + airqual, data=dat)
+anova(mlr_null, mlr1)
+summary(mlr1)$coef
+@
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Today's Big Ideas}
+
+\bi
+        \myitem Inference for multiple linear regression models
+\ei
+
+\end{frame}
+
+\end{document}

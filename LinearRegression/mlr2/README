@@ -1,0 +1,67 @@
+This module has been lifted from my course materials for Statistical Modeling and Data Visualization, the second course in an applied methodological sequence for graduate students in Biostatistics at UMass-Amherst.
+
+The full course website can be found here:
+http://nickreich.github.io/methods2/
+
+I have pasted in a markdown-based outline for the five classes contained in this module below:
+
+### Class 14 (Mar 11): MLR non-parametric inference
+_Activities_
+
+* warm-ups (visualization critique)
+* lecture: simulation and inference from resampling 
+* permutation test lab ( [html](../assets/lectures/class14_permutationLab.html) | [source](../assets/lectures/class14_permutationLab.Rmd) )
+
+_Homework_
+
+* Start a new data analysis write-up, include a brief summary from the first round. 
+* Add bootstrapped inference to the new write-up.
+
+#### Class 15 (Mar 15): MLR diagnostics
+_Activities_
+
+* Data Fest promo with Andrew
+* wits and wagers
+* review of course expectations 
+* demo and lecture: regression diagnostics 
+
+_Homework_
+
+* Dataset for final project proposed by Wednesday, March 26
+
+#### Class 16 (Mar 25): MLR diagnostics (continued)
+_Activities_
+
+* wits and wagers
+* lecture: regression diagnostics 
+* project and class schedule check-in
+* in groups: dataset discussions
+
+_Homework_
+
+* Dataset for final project proposed by Wednesday, March 26
+* Individual project topics proposed by Wednesday, April 2
+* Problem set 3 due Friday, April 4 at 5pm.
+
+#### Class 17 (Mar 27): MLR model selection
+_Activities_
+
+* lecture: model selection
+* FEV dataset walk-through analysis in class
+* group work on projects
+
+_Homework_
+
+* Individual project topics proposed by Wednesday, April 2
+* Problem set 3 due Friday, April 4 at 5pm.
+
+#### Class 18 (April 1): MLR interactions, variable transformations
+_Activities_
+
+* lecture: interaction and variable transformations
+* group work on projects
+
+_Homework_
+
+* Individual project topics proposed by Wednesday, April 2
+* Problem set 3 due Friday, April 4 at 5pm.

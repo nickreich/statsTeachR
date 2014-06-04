@@ -1,0 +1,427 @@
+%% beamer/knitr slides 
+%% for Statistical Modeling and Data Visualization course @ UMass
+%% Nicholas Reich: nick [at] schoolph.umass.edu
+
+
+\documentclass[table]{beamer}
+
+
+\input{../standard_knitr_beamer_preamble}
+
+%        The following variables are assumed by the standard preamble:
+%	Global variable containing module name:
+\title{Final concepts of SLR}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{introRegression}
+%	Global variable containing author name:
+\author{Nicholas G Reich, Jeff Goldsmith}
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{}
+
+
+\input{../shortcuts}
+
+\hypersetup{colorlinks,linkcolor=,urlcolor=MainColor}
+
+
+%	******	Document body begins here	**********************
+
+\begin{document}
+
+%	Title page
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%	******	Everything through the above line must be placed at
+%		the top of any TeX file using the statsTeachR standard
+%		beamer preamble. 
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Today's lecture}
+
+\bi
+        \myitem Simple Linear Regression Continued
+	\myitem Multiple Regression Intro
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Simple linear regression model}
+
+\bi
+	\myitem Observe data $(y_i, x_i)$ for subjects $1, \ldots, I$. Want to estimate $\beta_0, \beta_1$ in the model
+	$$ y_i = \beta_0 + \beta_1x_i + \epsilon_i; \mbox{ } \epsilon_i \stackrel{iid}{\sim} (0,\sigma^2)$$
+	\myitem Note the assumptions on the variance:
+	\bi
+		\myitem $E(\epsilon \mid x) = E(\epsilon) = 0$
+		\myitem Constant variance
+		\myitem Independence
+		\myitem [Normally distributed is not needed for least squares, but is needed for inference]
+	\ei
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Some definitions / SLR products}
+
+\bi
+	\myitem {\it Fitted values}: $\hat{y}_i := \hat{\beta}_0 + \hat{\beta}_1 x_i$
+	\myitem {\it Residuals / estimated errors}: $\hat{\epsilon}_i := y_i - \hat{y}_i$
+	\myitem {\it Residual sum of squares}: RSS := $\sum_{i = 1}^{n} \hat{\epsilon_i}^2$
+	\myitem {\it Residual variance}: $\hat{\sigma^2} := \frac{RSS}{n-2}$
+	\myitem {\it Degrees of freedom}: $n - 2$
+\ei
+
+Notes: residual sample mean is zero; residuals are uncorrelated with fitted values.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{$R^2$}
+
+\begin{block}{Looking for a measure of goodness of fit.}
+
+\bi
+	\myitem RSS by itself doesn't work so well:
+		$$ \sum_{i = 1}^{n} (y_i - \hat{y}_i )^2 $$
+	\myitem Coefficient of determination ($R^2$) works better:
+		$$ R^2 = 1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}$$
+\ei
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{$R^2$}
+
+\begin{block}{Some notes about $R^2$}
+
+\bi
+	\myitem Interpreted as proportion of outcome variance explained by the model.
+	\myitem Alternative form
+		$$ R^2 = \frac{\sum (\hat{y}_i -\bar{y})^2}{\sum (y_i - \bar{y})^2}$$
+	\myitem $R^2$ is bounded: $0 \leq R^2 \leq 1$
+	\myitem For simple linear regression only, $R^2 = \rho^2$
+\ei
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{ANOVA}
+
+\begin{block}{Lots of sums of squares around.}
+
+\bi
+	\myitem Regression sum of squares $SS_{reg} = \sum (\hat{y}_i -\bar{y})^2$
+	\myitem Residual sum of squares $SS_{res} = \sum (y_i - \hat{y}_i)^2$
+	\myitem Total sum of squares $SS_{tot} = \sum (y_i - \bar{y})^2$
+	\myitem All are related to sample variances
+\ei
+
+Analysis of variance (ANOVA) seeks to address goodness-of-fit by looking at these sample variances.
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{ANOVA}
+
+ANOVA is based on the fact that $SS_{tot} = SS_{reg}+SS_{res}$
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{ANOVA}
+
+ANOVA is based on the fact that $SS_{tot} = SS_{reg}+SS_{res}$
+
+\begin{figure}[t]
+    \includegraphics[width=.8\textwidth]{./Figs/Fig07.pdf}  
+\end{figure}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{ANOVA and $R^2$}
+
+\bi
+	\myitem Both take advantage of sums of squares
+	\myitem Both are defined for more complex models
+	\myitem ANOVA can be used to derive a ``global hypothesis test" based on an F test (more on this later)
+\ei
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{R example}
+
+<<linmod, message=FALSE>>=
+require(alr3)
+data(heights)
+linmod <- lm(Dheight~Mheight, data=heights)
+linmod
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{R example}
+
+<<linmod2, size='footnotesize'>>=
+summary(linmod)
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{R example}
+
+<<linmod3, size='footnotesize'>>=
+names(linmod)
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{R example}
+
+
+<<linmod4, size='footnotesize'>>=
+head(linmod$residuals)
+head(resid(linmod))
+head(linmod$fitted.values)
+head(fitted(linmod))
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{R example}
+
+
+<<linmod5, size='footnotesize'>>=
+names(summary(linmod))
+summary(linmod)$coef
+summary(linmod)$r.squared
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{R example}
+
+<<linmod6, size='footnotesize'>>=
+anova(linmod)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{R example}
+
+<<linmod7, size='footnotesize'>>=
+anova(linmod)
+(r2 <- 1-7052/(7052+2237))
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{Note on interpretation of $\beta_0$}
+
+Recall $\beta_0 = E(y | x = 0)$
+\bi
+	\myitem This often makes no sense in context
+	\myitem ``Centering" $x$ can be useful: $x^{*} = x - \bar{x}$
+	\myitem Center by mean, median, minimum, etc
+	\myitem Effect of centering on slope:
+\ei
+
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{Note on interpretation of $\beta_0, \beta_1$}
+
+\bi
+	\myitem The interpretations are sensitive to the scale of the outcome and predictors (in reasonable ways)
+	\myitem You can't get a better model fit by rescaling variables
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{R example}
+
+<<linmodCentered, size='scriptsize'>>=
+heights$centeredMheight <- heights$Mheight - mean(heights$Mheight)
+centeredLinmod <- lm(Dheight ~ centeredMheight, data=heights)
+summary(centeredLinmod)
+@
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Properties of $\hat{\beta}_0, \hat{\beta}_1$}
+
+\begin{figure}[t]
+    \includegraphics[width=.8\textwidth]{./Figs/CircleOfLife.pdf}  
+\end{figure}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{Properties of $\hat{\beta}_0, \hat{\beta}_1$}
+
+\begin{block}{Estimates are unbiased:}
+
+$E(\hat{\beta_0}) = \beta_0$
+
+\vspace{2cm}
+
+$E(\hat{\beta_1}) = \beta_1$
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{Properties of $\hat{\beta}_0, \hat{\beta}_1$}
+
+\begin{block}{Variances of estimates}
+
+$Var(\hat{\beta_0}) = \frac{\bar x\sigma^2}{\sum x^2}$
+
+\vspace{2cm}
+
+$Var(\hat{\beta_1}) = \frac{\sigma^2}{S_{xx}}$
+
+where $S_{xx} = \sum (x-\bar x)^2$
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{Properties of $\hat{\beta}_0, \hat{\beta}_1$}
+
+Note about the variance of $\beta_1$:
+\bi
+	\myitem Denominator contains $SS_{x} = \sum (x_i - \bar{x})^2$
+	\myitem To decrease variance of $\hat \beta_1$, increase variance of $x$
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{One slide on multiple linear regression}
+
+\bi
+	\myitem Observe data $(y_i, x_{i1}, \ldots, x_{ip})$ for subjects $1, \ldots, n$. Want to estimate $\beta_0, \beta_1, \ldots, \beta_p$ in the model
+	$$ y_i = \beta_0 + \beta_1x_{i1} + \ldots + \beta_1x_{ip} + \epsilon_i; \mbox{ } \epsilon_i \stackrel{iid}{\sim} (0,\sigma^2)$$
+	\myitem Assumptions (residuals have mean zero, constant variance, are independent) are as in SLR
+	\myitem Notation is cumbersome. To fix this, let
+	\bi
+		\myitem $\bx_i = [1, x_{i1}, \ldots, x_{ip}]$
+		\myitem $\bbeta^{T} = [\beta_0, \beta_1, \ldots, \bbeta_{p}]$
+		\myitem Then $y_i = \bx_i \bbeta + \epsilon_i$
+	\ei
+\ei
+
+\end{frame}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Summary}
+
+\begin{block}{Today's big ideas}
+\bi
+	\item Simple linear regression definitions
+	\item Properties of least squares estimates
+\ei
+\end{block}
+
+\begin{block}{Coming up soon}
+\bi
+        \item More on MLR 
+\ei
+\end{block}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end{document}

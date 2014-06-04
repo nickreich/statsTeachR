@@ -1,0 +1,57 @@
+A Titanic Challenge 
+========================================================
+#### Spring 2014, Biostatistics Methods 2, UMass-Amherst
+
+For this challenge, your project team will use logistic regression to construct a model that predicts survival of passengers on the titanic.  The dataset we will be using is the titanic3 dataset which is part of the PASWR package.
+
+At the end of class, each team will hand in (via Piazza) a figure showing predicted probabilities from their model as well as predicted probabilities for 10 specific individuals from the dataset. 
+
+You must fit a logistic regression to make the predictions. All methods that we have discussed in this class (splines, interactions, etc..) are fair game to help you build your model and make predictions. The team that wins the competition (see final item below) will receive a 5% bonus on their group grade for the final project (i.e. group grade will be multiplied by 1.05, prior to peer evaluation multipliers). Good luck!
+
+### Loading the data
+```{r, message=FALSE}
+require(PASWR)
+data(titanic3)
+str(titanic3)
+```
+
+
+### Plotting predicted probabilities
+This is a very simple example that plots jittered predicted probabilities from the simple model
+$$logit(Pr(survival|pclass)) = \beta_0 + \beta_1 Class_2 + \beta_2 Class_3 $$
+where $Class_2$ and $Class_3$ are indicator variables for being in 2nd or 3rd class.
+```{r fig.width=10, fig.height=6}
+m1 <- glm(survived ~ pclass, data=titanic3, family=binomial)
+titanic3$preds <- fitted(m1, type="response")
+qplot(pclass, preds, data=titanic3, color=pclass, geom=c("jitter")) + 
+        ylim(0,1) +
+        ylab("predicted probability")
+```
+
+The final figure need not have an axis for every variable included in the model, but it should show several different dimensions (using axes, colors, facets, heat maps, etc...).
+
+### Competition to predict outcomes
+Each team will hand in predicted probabilities of survival for the 10 individuals identified by the following row numbers: `c(2, 10, 79, 821, 829, 365, 388, 343, 626, 726)`. These ten predictions will be evaluated using the following log loss function, or the "predictive binomial deviance":
+$$PBD = -\frac{1}{n}\sum_1^{10} \left [ y_i\log(\hat y_i) + (1-y_i)\log(1-\hat y_i) \right ]$$
+where
+* $y_i$ is the outcome (1 for survived, 0 for died)
+* $\hat y_i$ is the predicted probability
+* $\log$ is the natural logarithm 
+The team with the lowest PBD "wins" this competition.
+
+This function will be used to calculate the PBD, assuming that p is a vector of length 10 with the predicted probabilities:
+```{r}
+pbd <- function(p) {
+                idx <- c(2, 10, 79, 821, 829, 365, 388, 343, 626, 726)
+                y <- titanic3[idx, "survived"]
+                -sum(y*log(p) + (1-y)*log(1-p))/10 
+        }
+```
+
+So for example, we would calculate the PBD from the above model as follows:
+```{r}
+idx <- c(2, 10, 79, 821, 829, 365, 388, 343, 626, 726)
+ps <- titanic3[idx, "preds"]
+pbd(ps)
+```
+

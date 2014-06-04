@@ -1,0 +1,8 @@
+Name: logistic
+Title: Introduction to Logistic Regression
+Date: 2014-05-28
+Author: Nicholas G Reich <nick@schoolph.umass.edu>
+Version: v0.5
+Description: This module was adapted from the Statistical Modeling and Data Visualization course at UMass-Amherst. This module provides materials for two classes on logistic regression targeted for upper-level undergraduate or entry-level graduate students. 
+Keywords: logistic regression
+Suggests: slr, mlr1, mlr2

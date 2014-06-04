@@ -1,0 +1,38 @@
+Global F tests and Family-Wise Error Rates
+========================================================
+### Code for Biostatistics Methods 2, UMass-Amherst, Spring 2014
+### by [Nicholas Reich](http://nickreich.github.io)
+
+If you have a lot of predictor variables, you should consider using global F tests. Here is a toy example that shows why. 
+
+We start by picking a number of observations and the number of parameters in our model, $p$. We then generate $p-1$ independent covariates, plus a column of 1s for the design matrix.
+```{r}
+nObs <- 1000
+p <- 100
+x <- matrix(rnorm(nObs*p), nrow=nObs)
+x <- data.frame(1, x)
+colNames <- paste0("x", 1:p)
+colnames(x) <- colNames
+```
+
+Now we will generate our $y$s completely independently of all of our covariates. None of our $x$ variables are associated with our outcome!
+```{r}
+y <- rnorm(nObs)
+```
+
+But if we fit a linear model that assumes that there ARE relationships bewteen our outcome and all of our $x$ variables, do we see any individually significant $\betas$? If so, how many are significant and are these indiciative of real associations?
+```{r}
+fmla <- formula(paste0("y ~ 0 +", paste(colNames, collapse="+")))
+mlr1 <- lm(fmla, data=x)
+coefs <- summary(mlr1)$coef
+sum(coefs[,"Pr(>|t|)"]<.05)
+```
+
+Alternatively, we could use a Global $F$-test to test whether any of the $x$ variables add significant explanatory power to our model. What conclusion do we draw from this test?
+```{r}
+mlr0 <- lm(y ~ x1, data=x)
+anova(mlr0, mlr1)
+```
+
+Do the results from the Global $F$-test and the individual $\beta$ $t$-tests agree? Why?
+

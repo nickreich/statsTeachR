@@ -1,0 +1,215 @@
+%% beamer/knitr slides 
+%% for Statistical Modeling and Data Visualization course @ UMass
+%% Nicholas Reich: nick [at] schoolph.umass.edu
+
+
+\documentclass[table]{beamer}
+
+
+\input{../standard_knitr_beamer_preamble}
+
+%        The following variables are assumed by the standard preamble:
+%        Global variable containing module name:
+
+\title{Multiple Linear Regression: \\ Categorical Predictors}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{multRegression}
+%	Global variable containing author name:
+\author{Nicholas G Reich, Jeff Goldsmith}
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{}
+
+
+\input{../shortcuts}
+\usepackage{bbm}
+
+\hypersetup{colorlinks,linkcolor=,urlcolor=MainColor}
+
+
+%	******	Document body begins here	**********************
+
+\begin{document}
+
+%	Title page
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%	******	Everything through the above line must be placed at
+%		the top of any TeX file using the statsTeachR standard
+%		beamer preamble. 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% acutal slides
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Today's Lecture}
+<<loadData, echo=FALSE, message=FALSE>>=
+dat <- read.table("../../data/lungc.txt", header=TRUE)
+require(ggplot2)
+theme_set(theme_bw())
+@
+
+\bi
+	\myitem Global F tests: review and examples
+\ei
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Addressing multiple comparisons}
+
+
+\begin{block}{You should be concerned about Family-Wise Error Rates!}
+
+\bigskip
+
+Three general approaches
+\bi
+	\myitem Do nothing in a reasonable way
+	\bi
+		\item Don't trust scientifically implausible results
+		\item Don't over-emphasize isolated findings
+	\ei
+	\myitem Correct for multiple comparisons
+	\bi
+		\item Often, use the Bonferroni correction and use $\alpha_i = \alpha /k$ for each test
+		\item Thanks to the Bonferroni inequality, this gives an overall $FWER \leq \alpha$
+	\ei
+	\myitem Use a global test
+\ei
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Global tests: an overview/review}
+
+Compare a smaller ``null" model to a larger ``alternative" model
+\bi
+	\myitem Smaller model must be nested in the larger model
+	\myitem That is, the smaller model must be a special case of the larger model
+	\myitem For both models, the $RSS$ gives a general idea about how well the model is fitting
+	\myitem In particular, something like 
+		$$\frac{RSS_{S} - RSS_{L}}{RSS_{L}}$$
+	compares the relative $RSS$ of the models
+\ei
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Global $F$ tests: a common categorical example}
+
+$$ \mbox{``Null'' Model:  } dis_i = \beta_0 + \beta_1 nut_{i} $$
+$$ \mbox{``Null'' Model + Educ: } dis_i = \beta_0 + \beta_1 nut_{i} + \beta_2 educ_{6,i} + \dots + \beta_{15} educ_{14,i} $$
+
+
+\scriptsize
+<<MLRmultcoef>>=
+mlrNull <- lm(disease ~ nutrition, data=dat)
+mlr1 <- lm(disease ~ nutrition + factor(education), data=dat)
+summary(mlr1)$coef
+@
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Global $F$ tests: a common categorical example}
+
+$$ \mbox{``Null'' Model:  } dis_i = \beta_0 + \beta_1 nut_{i} $$
+$$ \mbox{``Null'' Model + Educ: } dis_i = \beta_0 + \beta_1 nut_{i} + \beta_2 educ_{6,i} + \dots + \beta_{15} educ_{14,i} $$
+
+\scriptsize
+<<MLRmultANOVA>>=
+mlrNull <- lm(disease ~ nutrition, data=dat)
+mlr1 <- lm(disease ~ nutrition + factor(education), data=dat)
+anova(mlrNull, mlr1)
+@
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Global $F$ tests}
+
+\begin{block}{A couple of important special cases for the $F$ test}
+\bi
+        \myitem The null model contains the intercept only
+	\bi
+		\item When people say ANOVA, this is often what they mean (although all $F$ tests are based on an analysis of variance)
+	\ei
+	\myitem The null model and the alternative model differ only by one term
+	\bi
+		\item Gives a way of testing for a single coefficient
+		\item Turns out to be equivalent to a two-sided $t$-test: $t^{2}_{df_{L}} \sim F_{1, df_{L}}$
+	\ei	
+\ei
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Lung data: single coefficient test}
+
+The $F$ test is equivalent to the $t$ test when there's only one parameter of interest
+
+\scriptsize
+<<MLRsinglecoef>>=
+mlrNull <- lm(disease ~ nutrition, data=dat)
+mlr2 <- lm(disease ~ nutrition + airqual, data=dat)
+anova(mlrNull, mlr2)
+summary(mlr2)$coef
+@
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Today's Big Ideas}
+
+\begin{block}{$F$ tests can control for multiple comparisons!} 
+\bi
+        \myitem hands-on example
+\ei
+\end{block}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Today's Big Ideas}
+
+\bi
+        \myitem Global tests: examples and special circumstances
+\ei
+
+\end{frame}
+
+\end{document}

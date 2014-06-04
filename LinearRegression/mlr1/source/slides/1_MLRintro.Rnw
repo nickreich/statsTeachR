@@ -1,0 +1,215 @@
+%% beamer/knitr slides 
+%% for Statistical Modeling and Data Visualization course @ UMass
+%% Nicholas Reich: nick [at] schoolph.umass.edu
+
+
+\documentclass[table]{beamer}
+
+
+\input{../standard_knitr_beamer_preamble}
+
+%        The following variables are assumed by the standard preamble:
+%        Global variable containing module name:
+
+\title{Introduction to Multiple Linear Regression}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{multRegression}
+%	Global variable containing author name:
+\author{Nicholas G Reich, Jeff Goldsmith}
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{}
+
+
+\input{../shortcuts}
+
+\hypersetup{colorlinks,linkcolor=,urlcolor=MainColor}
+
+
+%	******	Document body begins here	**********************
+
+\begin{document}
+
+%	Title page
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%	******	Everything through the above line must be placed at
+%		the top of any TeX file using the statsTeachR standard
+%		beamer preamble. 
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}{Today's lecture}
+
+\bi
+        \myitem Multiple Linear Regression 
+	\bi
+		\myitem Assumptions
+		\myitem Interpretation
+		%\myitem Notation
+		%\myitem Estimation
+	\ei
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Motivation}
+
+Most applications involve more that one covariate -- if more than one thing can influence an outcome, you need multiple linear regression.
+\bi
+	\myitem Improved description of $y | \bx$
+	\myitem More accurate estimates and predictions
+	\myitem Allow testing of multiple effects
+	\myitem Includes multiple predictor types
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Why not bin all predictors?}
+
+\bi
+	\myitem Divide $x_i$ into $k_i$ bins
+	\myitem Stratify data based on inclusion in bins across $x$'s
+	\myitem Find mean of the $y_i$ in each category
+	\myitem Possibly a reasonable non-parametric model
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Why not bin all predictors?}
+
+\begin{figure}[t]
+    \includegraphics[width=.8\textwidth]{./Figs/Fig01.pdf}  
+\end{figure}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Why not bin all predictors?}
+
+\bi
+	\myitem More predictors = more bins
+	\myitem If each $x$ has 5 bins, you have $5^p$ overall categories
+	\myitem May not have enough data to estimate distribution in each category
+	\myitem Curse of dimensionality is a problem in a lot of non-parametric statistics
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Multiple linear regression model}
+
+\bi
+	\myitem Observe data $(y_i, x_{i1}, \ldots, x_{ip})$ for subjects $1, \ldots, n$. Want to estimate $\beta_0, \beta_1, \ldots, \beta_p$ in the model
+	$$ y_i = \beta_0 + \beta_1x_{i1} + \ldots + \beta_1x_{ip} + \epsilon_i; \mbox{ } \epsilon_i \stackrel{iid}{\sim} (0,\sigma^2)$$
+	\myitem Assumptions (residuals have mean zero, constant variance, are independent) are as in SLR
+	\myitem Impose linearity which (as in the SLR) is a big assumption
+	\myitem Our primary interest will be $E(y | \bx)$
+	\myitem Eventually estimate model parameters using least squares
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Predictor types}
+
+\bi
+	\myitem Continuous
+	\myitem Categorical
+	\myitem Ordinal
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{Interpretation of coefficients}
+
+$\beta_0 = E(y | x_1 = 0, \ldots, x = 0)$
+\bi
+	\myitem Centering some of the $x$'s may make this more interpretable
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{Interpretation of $\beta_1$}
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Example with two predictors}
+
+Suppose we want to regress weight on height and sex.
+\bi
+	\myitem Model is $y_i = \beta_0 + \beta_1 x_{i, age} + \beta_2 x_{i, sex} + \epsilon_i$
+	\myitem Age is continuous starting with age 0; sex is binary, coded so that $x_{i,sex} = 0$ for men and $x_{i,sex} = 1$ for women
+\ei
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{Example with two predictors}
+
+$\beta_1 = $
+
+\vspace{2.5cm}
+
+$\beta_2 = $
+
+\end{frame}
+
+
+\begin{frame}{Coming up next...}
+
+\begin{block}{Multiple linear regression models}
+\bi
+        \item notation
+        \item estimation
+        \item inference
+\ei
+\end{block}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end{document}

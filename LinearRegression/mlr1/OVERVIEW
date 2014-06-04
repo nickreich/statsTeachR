@@ -1,0 +1,8 @@
+Name: mlr1
+Title: Introduction to Multiple Linear Regression
+Date: 2014-06-02
+Author: Nicholas G Reich <nick@schoolph.umass.edu>
+Version: v0.6
+Description: This module was adapted from the Statistical Modeling and Data Visualization course at UMass-Amherst. This module provides materials for six to seven classes on multiple linear regression targeted for upper-level undergraduate or entry-level graduate students. Topics covered include: basic MLR notation (including matrix notation), interpretations of continuous and categorical covariates, F-testing, and confidence intervals. There is one lab included, which provides a hands-on comparison of looking at multiple tests of coefficients and of doing global F-tests.
+Keywords: regression, multiple linear regression
+Suggests: slr

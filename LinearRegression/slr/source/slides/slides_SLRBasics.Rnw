@@ -1,0 +1,340 @@
+%% beamer/knitr slides 
+%% for Statistical Modeling and Data Visualization course @ UMass
+%% Nicholas Reich: nick [at] schoolph.umass.edu
+
+
+\documentclass[table]{beamer}
+
+
+\input{../standard_knitr_beamer_preamble}
+
+%        The following variables are assumed by the standard preamble:
+%	Global variable containing module name:
+\title{Simple Linear Regression and the Method of Least Squares}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{introRegression}
+%	Global variable containing author name:
+\author{Nicholas G Reich, Jeff Goldsmith}
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{}
+
+
+\input{../shortcuts}
+
+\hypersetup{colorlinks,linkcolor=,urlcolor=MainColor}
+
+
+%	******	Document body begins here	**********************
+
+\begin{document}
+
+%	Title page
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%	******	Everything through the above line must be placed at
+%		the top of any TeX file using the statsTeachR standard
+%		beamer preamble. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% acutal slides
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}%{Warm up}
+
+\begin{figure}[h]
+    \includegraphics[width=\textwidth]{./Figs/mostError.png}  
+\end{figure}
+
+\tiny{Figure acknowledgements to \href{http://stat405.had.co.nz/lectures/23-modelling.pdf}{Hadley Wickham}.}
+
+\end{frame}
+
+\begin{frame}[fragile]{Which data show a stronger association?}
+<<warmUp, echo=FALSE, message=FALSE, fig.height=5.5>>=
+require(ggplot2)
+n <- 1000
+x <- runif(n)
+s1 <- 1
+s2 <- 4
+yA <- 4 + 5*x + rnorm(n, sd=s1)
+yB <- 4 + 15*x + rnorm(n, sd=s2)
+dat <- data.frame(x=rep(x, times=2), y=c(yA, yB), set=rep(1:2, each=n))
+qplot(x, y, data=dat, facets=.~set, alpha=.5) + geom_smooth(method="lm", se=FALSE, color="red") + theme_bw() + guides(alpha=FALSE)
+@
+\end{frame}
+
+
+%\begin{frame}[fragile]{Warm up regression output}
+
+%<<warmUpOutput, echo=FALSE, fig.height=2>>=
+%qplot(x, y, data=dat, facets=.~set, alpha=.5) + geom_smooth(method="lm", se=FALSE, %color="red") + theme_bw() + guides(alpha=FALSE)
+%summary(lm(yA~x))$coef
+%summary(lm(yB~x))$coef
+%@
+
+%\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Goals for this class}
+
+\begin{block}{You should be able to...}
+\bi
+        \myitem interpret regression coefficients.
+        \myitem derive estimators for SLR coefficients.
+        \myitem implement a SLR from scratch (i.e. not using {\tt lm()}).
+        \myitem explain why some points have more influence than others on the fitted line.
+\ei
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Regression modeling}
+
+\bi
+	\myitem Want to use predictors to learn about the outcome distribution, particularly conditional expected value.
+	\myitem Formulate the problem parametrically
+		\beqa
+		E(y \mid x) = f(x;\beta) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots
+		\eeqa
+	\myitem (Note that other useful quantities, like covariance and correlation, tell you about the joint distribution of $y$ and $x$)
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Brief Detour: Covariance and Correlation}
+
+\beqa
+cov(x,y) & = & \mathbb E \left [ (x-\mu_x)(y-\mu_y) \right ] \\
+% & = & \mathbb E(xy) - \mu_x\mu_y \\
+cor(x,y) & = & \frac{cov(x,y)}{\sqrt{var(x)var(y)}}
+\eeqa
+\vspace{11em}
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Simple linear regression}
+
+\bi
+	\myitem Linear models are a special case of all regression models; simple linear regression is the simplest place to start
+	\myitem Only one predictor:
+		\beqa
+		E(y \mid x) = f(x;\beta) = \beta_0 + \beta_1 x_1
+		\eeqa
+	\myitem Useful to note that $x_0 = 1$ (implicit definition)
+	\myitem Somehow, estimate $\beta_0, \beta_1$ using observed data.
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Coefficient interpretation}
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Coefficient interpretation}
+
+\begin{figure}[h]
+    \includegraphics[width=\textwidth]{./Figs/Fig01.pdf}  
+\end{figure}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Step 1: Always look at the data!}
+
+\bi
+	\myitem Plot the data using, e.g. the \texttt{plot()} or \texttt{qplot()} functions
+	\myitem Do the data look like the assumed model?
+	\myitem Should you be concerned about outliers?
+	\myitem Define what you expect to see before fitting any model.
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]
+
+<<scatterPlots, echo=FALSE, cache=TRUE, fig.height=5.5>>=
+## plot 1
+x1 = rnorm(100)
+y1 = rnorm(100)
+
+## plot 2
+x2 <- rnorm(100)
+y2 = -2-2*x2 + rnorm(100, 0, .5)
+x2[1] <- 3; y2[1] <- .2
+
+## plot 3
+x3 <- rnorm(100)
+y3 = -2+2*(x3+1)^2 + rnorm(100, 0, 2)
+
+##plot 4
+x4 <- abs(rnorm(100, mean=2))
+y4 = -2+4*x4 + rnorm(100, 0, x4*2)
+
+## plot all at once
+dat1 <- data.frame(x=c(x1, x2, x3, x4), y=c(y1, y2, y3, y4), graph=rep(1:4, each=100))
+qplot(x, y, data=dat1) + facet_wrap(~graph, scales="free")
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{Least squares estimation}
+\bi
+	\myitem Observe data $(y_i, x_i)$ for subjects $1, \ldots, I$. Want to estimate $\beta_0, \beta_1$ in the model
+	$$ y_i = \beta_0 + \beta_1x_i + \epsilon_i; \mbox{ } \epsilon_i \stackrel{iid}{\sim} (0,\sigma^2)$$
+	\myitem Recall the assumptions:
+	\bi
+		\myitem A2: $E(\epsilon \mid x) = E(\epsilon) = 0$
+		\myitem A3: Uncorrelated errors
+        	\myitem A4: Constant variance
+		\myitem A5: Normal distribution not needed for least squares, but {\bf is} needed for inference.]
+	\ei
+\ei
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Circle of Life}
+
+\begin{figure}[t]
+    \includegraphics[width=.8\textwidth]{./Figs/CircleOfLife.pdf}  
+\end{figure}
+
+\end{frame} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{Least squares estimation}
+\bi
+	\myitem Recall that for a single sample $y_i, i \in 1, \ldots, N$, the sample mean $\hat{\mu}_y$ minimizes the sum of squared deviations.
+\ei
+\beqa
+RSS(\mu_y) &=& \sum_{i=1}^N(y_i-\mu_y)^2
+\eeqa
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{Least squares estimation}
+Find $\hat{\beta}_0$ and $\beta_1$. By minimizing RSS relative to each parameter.
+\beqa
+RSS(\beta_0, \beta_1) &=& \sum_{i=1}^N(y_i-\mathbb E[y_i|x_i])^2
+\eeqa
+
+\vspace{1in}
+We obtain
+\beqa
+\hat \beta_0 \ = \ b_0  & = & \bar y - b_1 \bar x\\
+\hat \beta_1 \ = \ b_1  & = & \frac{\sum(x_i - \bar x)(y_i - \bar y)}{\sum(x_i-\bar x)^2}
+\eeqa
+
+
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Notes about LSE}
+\begin{block}{Relationship between correlation and slope}
+\vspace{-.3in}
+\beqa
+\rho = \frac{cov(x, y)}{\sqrt{var(x)var(y)}}; \hspace{1cm} \hat{\beta}_1 = \frac{cov(x, y)}{var(x)}
+\eeqa
+\end{block}
+
+\begin{block}{Why we need to keep watch for outliers}
+\vspace{-.3in}
+\beqa
+\hat{\beta}_1 & = & \frac{\sum(y_i - \bar y)(x_i - \bar x)}{\sum(x_i-\bar x)^2}\\
+& = & \frac{\sum\frac{y_i - \bar y}{x_i - \bar x}(x_i - \bar x)^2}{\sum(x_i-\bar x)^2} \\
+& = & \sum\frac{y_i - \bar y}{x_i - \bar x}\omega_i
+\eeqa
+Note that weight $\omega_i$ increases as $x_i$ gets further away from $\bar x$.
+\end{block}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Geometric interpretation of least squares}
+
+Least squares minimizes the sum of squared vertical distances between observed and estimated $y$'s: 
+$$\stackrel{min}{\beta_0, \beta_1} \sum_{i = 1}^{I} (y_i - (\beta_0 + \beta_1x_i))^2$$
+
+\begin{figure}[h]
+    \includegraphics[width=.6\textwidth]{./Figs/Fig06.pdf}  
+\end{figure}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Least squares foreshadowing}
+
+\bi
+	\myitem Didn't have to choose to minimize squares -- could minimize absolute value, for instance.
+	\myitem Least squares estimates turn out to be a ``good idea" -- unbiased, BLUE.
+	\myitem Later we'll see about maximum likelihood as well.
+\ei
+
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

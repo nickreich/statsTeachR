@@ -1,0 +1,403 @@
+%% Module 2 beamer/knitr slides
+%% Biostatistics in Practice workshop, January 2014
+%% Nicholas Reich: nick [at] schoolph.umass.edu
+
+
+\documentclass[table]{beamer}
+
+
+\input{../standard_knitr_beamer_preamble}
+
+%        The following variables are assumed by the standard preamble:
+%	Global variable containing module name:
+\title{MLR Model Checking}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{mlr2}
+%	Global variable containing author name:
+\author{Nicholas G Reich, Jeff Goldsmith}
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\_US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{}
+
+\input{../shortcuts}
+\usepackage{bbm}
+\hypersetup{colorlinks=TRUE, urlcolor=blue}
+
+%%%%%%%% IMPORTANT -- MUST HAVE [fragile] for some/all frames chunks to have output work correctly. 
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+library(knitr)
+opts_chunk$set(fig.path='figure/beamer-',fig.align='center',fig.show='hold',size='footnotesize')
+@
+
+
+\begin{frame}[plain]
+        \titlepage
+\end{frame}
+
+<<ggplot2, echo=FALSE, message=FALSE>>=
+require(ggplot2)
+theme_set(theme_bw())
+@
+
+
+\begin{frame}{Today's Lecture}
+
+\bi
+        \myitem Model selection vs. model checking
+	\myitem Continue with model checking (regression diagnostics)
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Model selection vs. model checking}
+
+\begin{block}{Assume $ y | \bx = f(\bx) + \epsilon$}
+\bi
+        \myitem model selection focuses on how you construct $f(\cdot)$;
+        \myitem model checking asks whether the $\epsilon$ match the assumed form.
+\ei
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Model checking: possible challenges}
+
+\begin{block}{Two major areas of concern}
+\bi
+        \myitem Global lack of fit, or general breakdown of model assumptions
+	\bi
+		\item Linearity
+		\item Unbiased, uncorrelated errors $E(\epsilon | x) = E(\epsilon) = 0$ 
+		\item Constant variance $Var(y | x) = Var(\epsilon |x) = \sigma^2$
+		\item Independent errors
+		\item Normality of errors
+	\ei
+	\myitem Effect of influential points and outliers
+\ei
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Model checking: possible solutions}
+
+\bi
+	\myitem Global lack of fit, or general breakdown of model assumptions
+	\bi
+		\item Residual analysis -- QQ plots, residual plots against fitted values and predictors
+		\item Adjusted variable plots
+	\ei
+	\myitem Effect of influential points and outliers
+	\bi
+		\item Measure of leverage, influence, outlying-ness
+	\ei
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Residual plots: verifying assumptions}
+
+\center Which assumptions are these plots evaluating? 
+
+<<errorModels, echo=FALSE, message=FALSE, fig.height=3>>=
+x = sort(runif(200, 0, 10))
+error1 = rnorm(200)
+error2 = rnorm(200) * x
+error3 = rnorm(200, mean = 0, sd = 5)
+y1 = 1+2*x + error1
+fit1 = lm(y1~x)
+y2 = 1+2*x + error2
+fit2 = lm(y2~x)
+y3 = 1+(x-4)^2 + error3
+fit3 = lm(y3~x)
+fits <- c(fitted(fit1), fitted(fit2), fitted(fit3))
+resids <- c(resid(fit1), resid(fit2), resid(fit3))
+dat <- data.frame(fit=rep(1:3, each=200), fitted=fits, residual=resids)
+qplot(fitted, residual, data=dat, geom=c("point", "smooth"), se=FALSE) + facet_wrap(~fit, scales="free") + geom_hline(yintercept=0, color="black")
+@
+
+Assumption violations are not often this obvious \\ (but sometimes they are!).
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{QQ-plots for checking Normality of residuals}
+
+\begin{block}{QQ plot defined}
+QQ-plot stands for quantile-quantile plot, and is used to compare two distributions. If the two distributions are the same, then each point (which represents a quantile from each distribution) should lie along the y=x line.
+\end{block}
+
+
+\begin{block}{For a single $(x,y)$ point}
+\bi
+        \myitem $x$ =  a specific quantile for the N(0,1) distribution 
+        \myitem $y$ = the same quantile from the (standardized, if needed) sample of data
+\ei
+\end{block}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{example: Gaussian or Normal(0,1) distribution}
+
+<<qqnorm, message=FALSE, fig.height=3.5>>=
+d1 <- rnorm(1000)
+layout(matrix(1:2, nrow=1))
+hist(d1, breaks=50, xlim=c(-6, 6))
+qqnorm(d1, pch = 19)
+qqline(d1)
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{example: Student's T-distribution with 6 d.f.}
+
+<<qqt, message=FALSE, fig.height=3.5>>=
+d1 <- rt(1000, df=5)
+layout(matrix(1:2, nrow=1))
+hist(d1, breaks=50, xlim=c(-6, 6))
+qqnorm(d1, pch = 19)
+qqline(d1)
+@
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]{example: Truncated Gaussian}
+
+<<qqtrunc, message=FALSE, fig.height=3.5>>=
+d1 <- rnorm(1000)
+d1 <- subset(d1, abs(d1)<2)
+layout(matrix(1:2, nrow=1))
+hist(d1, breaks=50, xlim=c(-6, 6))
+qqnorm(d1, pch = 19)
+qqline(d1)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{QQ-plots for our three fits from earlier}
+
+<<qqplots, echo=FALSE, message=FALSE, fig.height=3>>=
+layout(matrix(1:3, nrow=1))
+qqnorm(fit1$residuals, pch = 19)
+qqline(fit1$residuals)
+qqnorm(fit2$residuals, pch = 19)
+qqline(fit2$residuals)
+qqnorm(fit3$residuals, pch = 19)
+qqline(fit3$residuals)
+@
+
+<<repeatPlot, fig.height=2, echo=FALSE, message=FALSE>>=
+qplot(fitted, residual, data=dat, geom=c("point", "smooth"), se=FALSE) + facet_wrap(~fit, scales="free") + geom_hline(yintercept=0, color="black")
+
+@
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Model checking: possible solutions}
+
+\bi
+        \myitem Global lack of fit, or general breakdown of model assumptions
+	\bi
+		\item Residual analysis -- QQ plots, residual plots against fitted values and predictors
+		\item Adjusted variable plots
+	\ei
+	\myitem Effect of influential points and outliers
+	\bi
+		\item Measure of leverage, influence, outlying-ness
+	\ei
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Isolated points}
+
+\begin{block}{Points can be isolated in three ways}
+\bi
+        \myitem Leverage point -- outlier in $x$, measured by hat matrix
+	\myitem Outlier -- outlier in $y$, measured by residual
+	\myitem Influential point -- a point that largely affects $\bbeta$
+	\bi
+		\item Deletion influence; $| \hat{\bbeta} - \hat{\bbeta}_{(-i)}|$
+		\item Basically, a high-leverage outlier
+	\ei
+\ei
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Quantifying leverage}
+
+We measure leverage (the ``distance" of $\bx_i$ from the distribution of $\bx$) using
+$$ h_{ii} = \bx_{i}^{T} (\bX^{T} \bX)^{-1} \bx_{i} $$
+where $h_{ii}$ is the $(i,i)^{th}$ entry of the hat matrix. Where, recall
+
+$$ \bH = \bX(\bX^{T}\bX)^{-1}\bX^T $$
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Quantifying Leverage via the Hat Matrix}
+
+Note that 
+$$\sum_{i} h_{ii} \stackrel{def}{=} tr(\bH) = p$$
+where $p$ is the total number of independent predictors (i.e. $\beta$s) in your model (including a $\beta_0$ if you have one).
+
+
+\begin{block}{What counts as ``big" leverage?}
+\bi
+        \myitem Average leverage is $p/n$
+	\myitem Typical rules of thumb are $2p/n$ or $3p/n$
+	\myitem Leverage plots can be useful as well
+\ei
+\end{block}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Example Leverage plot with lung data}
+
+\scriptsize
+<<lungData, echo=FALSE>>=
+data <- read.table("lungc.txt",header=TRUE)
+@
+
+\scriptsize
+<<levPlots1, fig.height=3, tidy=FALSE>>=
+mlr <- lm(disease ~ nutrition+ airqual + crowding + smoking, 
+          data=data)
+hii <- hatvalues(mlr)
+x <- 1:length(hii)
+qplot(x, hii, geom="point")
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Outliers}
+
+\bi
+        \myitem When we refer to ``outliers" we typically mean ``points that don't have the same mean structure as the rest of the data"
+	\myitem Residuals give an idea of ``outlying-ness", but we need to standardize somehow
+	\myitem We can use the fact that $Var(\hat{\epsilon}_{i}) = \sigma^2(1 - h_{ii})$ ...
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Outliers}
+
+The {\it standardized} residual is given by
+$$\hat{\epsilon}^{*}_{i} = \frac{\hat{\epsilon}_{i}}{\sqrt{ Var(\hat{\epsilon}_{i})   }} = \frac{\hat{\epsilon}_{i}}{\hat{\sigma}\sqrt{(1 - h_{ii})}} $$
+
+The {\it Studentized} residual is given by
+$$t_{i} = \frac{\hat{\epsilon}_{(-i)}}{\hat{\sigma}_{(-i)}\sqrt{(1 - h_{ii})}} = \hat{\epsilon}^{*}_{i}\left(\frac{n-p}{n-p-\hat{\epsilon}^{*2}_{i}} \right)^{1/2}  $$
+Studentized residuals follow a $t_{n-p-1}$ distribution.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Influence}
+
+Intuitively, ``influence'' is a combination of outlying-ness and leverage. More specifically, we can measure the ``deletion influence'' of each observation: quantify how much $\hat\bbeta$ changes if an observation is left out.
+\bi
+	\myitem $|\hat{\bbeta}- \hat{\bbeta}_{(-i)}|$
+	\myitem Cook's distance is
+	\beqa
+		D_i &=& \frac{(\hat\bbeta - \hat\bbeta_{(i)})^T(\bX^T\bX)(\hat\bbeta - \hat\bbeta_{(i)})}{p\hat\sigma^2} \\
+			&=& \frac{(\hat \by - \hat \by_{(-i)})^T(\hat \by - \hat \by_{(-i)})}{p\hat\sigma^2} \\
+			&=& \frac{1}{p}\hat{\epsilon}_i^2\frac{h_{ii}}{1-h_{ii}}
+	\eeqa
+\ei
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Handy \texttt{R} functions}
+
+Suppose you fit a linear model in \texttt{R};
+\bi
+        \myitem \texttt{hatvalues} gives the diagonal elements of the hat matrix $h_{ii}$ (leverages)
+	\myitem \texttt{rstandard} gives the standardized residuals
+	\myitem \texttt{rstudent} gives the studentized residuals
+	\myitem \texttt{cooks.distance} gives the Cook's distances
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Built-in R plots for {\tt lm} objects}
+
+You can also use the {\tt plot.lm()} function to look at leverage, outlying-ness, and influence all together. Recall that
+$$D_i = \frac{1}{p}\hat{\epsilon}_i^2\frac{h_{ii}}{1-h_{ii}}$$
+<<plotlm, fig.height=3.5>>=
+plot(mlr, which=5)
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Today's big ideas}
+
+\bi
+	\myitem Model checking
+        \myitem Up next: model {\bf selection}!
+\ei
+
+
+
+\end{frame}
+
+
+\end{document}

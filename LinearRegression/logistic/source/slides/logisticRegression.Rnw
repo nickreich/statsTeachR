@@ -1,0 +1,372 @@
+%% Module 2 beamer/knitr slides
+%% Biostatistics in Practice workshop, January 2014
+%% Nicholas Reich: nick [at] schoolph.umass.edu
+
+
+\documentclass[table]{beamer}
+
+
+\input{../standard_knitr_beamer_preamble}
+
+%        The following variables are assumed by the standard preamble:
+%	Global variable containing module name:
+\title{Generalized Linear Models and Logistic Regression}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{logistic}
+%	Global variable containing author name:
+\author{Nicholas G Reich, OpenIntro }
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\_US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{}
+
+\input{../shortcuts}
+\usepackage{bbm}
+\hypersetup{colorlinks=TRUE, urlcolor=blue}
+
+%%%%%%%% IMPORTANT -- MUST HAVE [fragile] for some/all frames chunks to have output work correctly. 
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+library(knitr)
+opts_chunk$set(fig.path='figure/beamer-',fig.align='center',fig.show='hold',size='footnotesize')
+@
+
+
+\begin{frame}[plain]
+        \titlepage
+\end{frame}
+
+<<ggplot2, echo=FALSE, message=FALSE>>=
+require(ggplot2)
+theme_set(theme_bw())
+@
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Today's Lecture}
+
+
+\bi
+        \myitem Generalized linear models (GLMs)
+	\myitem Logistic regression
+\ei
+
+[Note: more on logistic regression can be found in the OpenIntro textbook, Chapter 8. These slides are based, in part, on the slides from OpenIntro.]
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Regression so far ...}
+    
+At this point we have covered:
+
+{\small
+\begin{itemize}
+\item Simple linear regression
+\begin{itemize}
+\item Relationship between numerical response and a numerical or categorical predictor
+\end{itemize}
+\item Multiple regression
+\begin{itemize}
+\item Relationship between numerical response and multiple numerical and/or categorical predictors
+\item What to do when the relationships with the predictors are complex (nonlinear, skewed distribution, interactions, confounding, etc.)
+\end{itemize}
+\end{itemize}
+}
+
+
+What we haven't covered is what to do when the response is not continuous (i.e. categorical, count data, etc.)
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}
+\frametitle{Example - Birdkeeping and Lung Cancer}
+
+A 1972 - 1981 health survey in The Hague, Netherlands, discovered an association between keeping pet birds and increased risk of lung cancer. To investigate birdkeeping as a risk factor, researchers conducted a case-control study of patients in 1985 at four hospitals in The Hague (population 450,000). They identified 49 cases of lung cancer among the patients who were registered with a general practice, who were age 65 or younger and who had resided in the city since 1965. They also selected 98 controls from a population of residents having the same general age structure.
+
+
+\vfill
+
+{\tiny \textit{Ramsey, F.L. and Schafer, D.W. (2002). The Statistical Sleuth: A Course in Methods of Data Analysis (2nd ed)}}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Example - Birdkeeping and Lung Cancer - Data}
+
+{\small
+<<donnerData>>=
+library(Sleuth3)
+birds = case2002
+head(birds)
+@
+}
+
+%~\\
+
+{\tiny
+\begin{center}
+\begin{tabular}{ll}
+LC & Whether subject has lung cancer \\
+FM & Sex of subject \\
+SS & Socioeconomic status \\
+BK & Indicator for birdkeeping \\
+AG & Age of subject (years) \\
+YR & Years of smoking prior to diagnosis or examination \\
+CD & Average rate of smoking (cigarettes per day)
+\end{tabular}
+\end{center}
+}
+
+\tiny{NoCancer is the reference response (0 or failure), LungCancer is the non-reference response (1 or success) - this matters for interpretation.}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]{Lung cancer as a function of cigarettes per day}
+
+
+<<donnerPlot, echo=FALSE, fig.height=4>>=
+p <- qplot(CD, as.numeric(LC=="LungCancer")*1, data=birds, geom=c("point", "smooth"), position=position_jitter(w=.7, h=0), method="lm", se=FALSE) + ylab("Lung Cancer") + scale_y_continuous(breaks=c(0,1))
+p
+@
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Generalized linear models}
+
+$$\mathbb E[Y|x] = \beta_0+\beta_1 X_1 + \cdots + \beta_p X_p$$
+
+\begin{block}{Why not just use MLR when outcomes not continuous?}
+\bi
+        \myitem Linearity assumption may be more unreasonable than usual.
+\ei
+\end{block}
+
+<<fig.height=3, echo=FALSE>>=
+p
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Generalized linear models}
+
+$$\mathbb E[Y|x] = \beta_0+\beta_1 X_1 + \cdots + \beta_p X_p$$
+\begin{block}{Why not just use MLR when outcomes not continuous?}
+\bi
+        \myitem Equal variance assumption often violated ($Var[Y|x]=\sigma^2$).
+\ei
+
+\end{block}
+<<fig.height=3, echo=FALSE>>=
+p
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Generalized linear models}
+
+$$\mathbb E[Y|x] = \beta_0+\beta_1 X_1 + \cdots + \beta_p X_p$$
+
+\begin{block}{Why not just use MLR when outcomes not continuous?}
+\bi
+        \myitem Assumption of normal errors explicitly violated.
+\ei
+
+\end{block}
+<<fig.height=3, echo=FALSE>>=
+p
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Generalized linear models: defined}
+
+All generalized linear models have the following three characteristics:
+\begin{enumerate}
+\item {\bf A probability distribution} describing the outcome variable \\
+e.g. $Y \sim \text{Bernoulli}(p) \longrightarrow \mathbb E[Y|p] = p$. 
+\item {\bf A linear model}
+\begin{itemize}
+\item $\eta = \beta_0+\beta_1 X_1 + \cdots + \beta_p X_p$
+\end{itemize}
+\item {\bf A link function} that relates the linear model to the parameter of the outcome distribution
+\begin{itemize}
+\item $g(\mathbb E[Y]) = g(p) = \eta$ or $\mathbb E[Y] = p = g^{-1}(\eta)$
+\end{itemize}
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Odds}
+
+\vspace{-2mm}
+
+Odds are another way of quantifying the probability of an event, commonly used in gambling (and logistic regression).\\
+
+~\\
+
+{
+For some event $E$,
+{\small
+\[\text{odds}(E) = \frac{P(E)}{P(E^c)} = \frac{P(E)}{1-P(E)}\]
+}
+Similarly, if we are told the odds of E are $x$ to $y$ then
+{\small
+\[\text{odds}(E) = \frac{x}{y} = \frac{x/(x+y)}{y/(x+y)} \]
+}
+which implies
+{\small
+\[P(E) = x/(x+y),\quad P(E^c) = y/(x+y)\]
+}
+}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]
+\frametitle{Logistic regression has log(odds) as the link}
+
+A logistic regression model can be defined as follows:
+
+$$Y_i | \mathbf x_i \sim \text{Bernoulli}(p_i)$$
+$$\mathbb E[Y_i|\mathbf x_i] = Pr(Y_i=1|\mathbf x_i) = p_i$$
+$$g(p_i) = logit (p_i) = \log \frac{p_i}{1-p_i} $$
+$$logit(\mathbb E[Y_i|\mathbf x_i]) = logit (p_i)  = \eta =  \beta_0+\beta_1 X_{i1} + \cdots + \beta_p X_{ip}$$
+
+<<logisticGraph, echo=FALSE, fig.height=3>>=
+x <- seq(-6, 6, by=.1)
+y <- exp(x)/(1+exp(x))
+qplot(x, y, geom="line") + ggtitle("Logistic function") + xlab("x") + ylab("p") + annotate("text", x=-4, y=.75, label="p == frac(e^eta,1+e^eta)", parse=TRUE)
+@
+
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]
+\frametitle{Example - Birdkeeping and Lung Cancer - Model}
+
+$$logit Pr(LC=1|\mathbf x)  =  \beta_0 + \beta_1 BK + \beta_2 FM + \beta_3 SS + \beta_4 AG + \beta_5 YR + \beta_6 CD$$
+\vspace{-5mm}
+\tiny
+<<birdModel, tidy=FALSE>>=
+birds$LCnum <- as.numeric(birds$LC=="LungCancer")
+birds$BK <- relevel(birds$BK, ref="NoBird")
+lm1 <- glm(LCnum ~ BK + FM + SS +  AG + YR + CD, 
+           data=birds, family=binomial)
+@
+
+\vspace{20em}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]
+\frametitle{Example - Birdkeeping and Lung Cancer - Interpretation}
+
+\vspace{-5mm}
+
+{\scriptsize
+<<>>=
+summary(lm1)$coef
+@
+}
+
+
+Keeping all other predictors constant then,
+\begin{itemize}
+
+\item The odds ratio of getting lung cancer for bird keepers vs non-bird keepers is $\exp(1.3626) = 3.91$.
+
+\item The odds ratio of getting lung cancer for an additional year of smoking is $\exp(0.0729) = 1.08$.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{What do the numbers not mean ...}
+
+The most common mistake made when interpreting logistic regression is to treat an odds ratio as a ratio of probabilities.\\
+
+~\\ 
+
+Bird keepers are \emph{not} 4x more likely to develop lung cancer than non-bird keepers.
+
+~\\ 
+
+This is the difference between relative risk and an odds ratio.
+
+
+\[RR = \frac{P(\text{disease} | \text{exposed})}{P(\text{disease} | \text{unexposed})} \]
+
+\[OR = \frac{P(\text{disease} | \text{exposed}) / [1-P(\text{disease} | \text{exposed})]}{P(\text{disease} | \text{unexposed})/[1-P(\text{disease} | \text{unexposed})]} \]
+
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]
+\frametitle{Important notes about GLMs}
+
+\begin{block}{On logistic regression in particular...}
+\bi
+        \myitem There are other link functions for binary data (e.g. probit, cloglog).
+        \myitem Other, less parameteric methods may be appropriate here too -- e.g. CART, random forests, classification algorithms.
+\ei
+\end{block}
+
+\begin{block}{Beyond the scope of this course, but interesting topics...}
+\bi
+        \myitem How are logistic models (and other GLMS) fitted?
+        \myitem Can we perform the same kind of model diagnostics to determine whether a model provides a good fit to data?
+        \myitem ROC curves and classification rules
+        \ei
+\end{block}
+
+\end{frame}
+
+
+
+\end{document}

@@ -1,0 +1,52 @@
+A permutation test for the Mother/Daughter heights data
+========================================================
+### prepared by Nicholas Reich for UMass PUBHLTH 690NR, Spring 2014
+
+This file documents an analysis to evaluate the significance of the association between mother and daughter heights. We will analyze the "heights" dataset from the `R` package `alr3`. 
+
+```{r loadData, message=FALSE}
+require(alr3)
+data(heights)
+```
+The heights dataset contains `r nrow(heights)` observations of heights of a mother and her daughter. This dataset was compiled by the statistician Karl Pearson in the late 1800s. To make this a more interesting example of a permutation test, we will limit our sample size and only consider a random sample of 200 rows of the dataset. We will start by describing the data visually with a simple graphic.
+
+```{r describeData, message=FALSE, fig.height=4, fig.width=5}
+heights <- heights[sample(200),]
+require(ggplot2)
+theme_set(theme_bw()) ## sets default white background theme for ggplot
+qplot(Mheight, Dheight, data=heights, col="red", alpha=.5) + theme(legend.position="none")
+```
+
+#### Running the permutation test
+We are interested in fitting the model
+$$ Dheight_i \sim \beta_0 + \beta_1 \cdot Mheight_i + \epsilon_i $$
+and in drawing inference about the $\beta_1$ parameter. Specifically, we are going to run a permutation test to evaluate evidence for or against the null hypothesis $H_0: \beta_1=0$.
+
+The following code runs the permutation test. [Sidenote: This code chunk is typically the kind of code chunk that you would want to cache in an RMarkdown file. However, if we were to cache it, then the subsample of the heights dataset would change every time the file was compiled but the permutation test would not be re-run each time. Cached chunks are only re-run when the code within that chunk is changed.]
+```{r runSim}
+nSim <- 1000 ## number of permutations
+
+## fit initial model and create storage file
+realDataModel <- lm(Dheight ~ Mheight, data=heights)
+realData_beta1 <- coef(realDataModel)[2]
+
+## create storage matrix
+mat <- matrix(NA, nrow=nSim, ncol=2)
+colnames(mat) <- c("b0", "b1")
+
+## run permutation loop, storing each time
+for(i in 1:nSim) { 
+        permDhts <- sample(heights$Dheight, replace=FALSE)
+        mdl <- lm(permDhts ~ heights$Mheight)
+        mat[i,] <- coef(mdl)
+}
+```
+
+Now that we have our distribution of $\beta_1$ under the null hypothesis, we can compare the estimate of $\beta_1$ from the real data analysis. Notice that we calculate a two-sided p-value by calculating how many $|\hat\beta_1^{(i)}| > \beta_1$. 
+```{r compareBeta, message=FALSE}
+qplot(mat[,"b1"]) + geom_vline(xintercept = realData_beta1, color="red")
+pval <- sum(abs(mat[,"b1"]) > realData_beta1)/nrow(mat)
+```
+The resulting p-value is `r round(pval, 3)`.
+
+

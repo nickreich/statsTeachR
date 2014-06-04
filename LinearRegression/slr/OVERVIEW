@@ -1,0 +1,7 @@
+Name: slr
+Title: Introduction to Simple Linear Regression
+Date: 2014-04-22
+Author: Nicholas G Reich <nick@schoolph.umass.edu>
+Version: v1.0
+Description: This module was taken from my Statistical Modeling and Data Visualization course at UMass-Amherst. This module provides four classes on simple linear regression targeted for upper-level undergraduate or entry-level graduate students. 
+Keywords: regression, linear regression, 

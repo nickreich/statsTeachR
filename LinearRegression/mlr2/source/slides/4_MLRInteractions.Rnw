@@ -1,0 +1,317 @@
+%% Module 2 beamer/knitr slides
+%% Biostatistics in Practice workshop, January 2014
+%% Nicholas Reich: nick [at] schoolph.umass.edu
+
+
+\documentclass[table]{beamer}
+
+
+\input{../standard_knitr_beamer_preamble}
+
+%        The following variables are assumed by the standard preamble:
+%	Global variable containing module name:
+\title{MLR Interactions and variable transformations}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{MLR}
+%	Global variable containing author name:
+\author{Nicholas G Reich, Jeff Goldsmith}
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\_US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{}
+
+\input{../shortcuts}
+\usepackage{bbm}
+\hypersetup{colorlinks=TRUE, urlcolor=blue}
+
+%%%%%%%% IMPORTANT -- MUST HAVE [fragile] for some/all frames chunks to have output work correctly. 
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+library(knitr)
+opts_chunk$set(fig.path='figure/beamer-',fig.align='center',fig.show='hold',size='footnotesize')
+@
+
+
+\begin{frame}[plain]
+        \titlepage
+\end{frame}
+
+<<ggplot2, echo=FALSE, message=FALSE>>=
+require(ggplot2)
+theme_set(theme_bw())
+@
+
+
+\begin{frame}{Today's Lecture}
+
+\begin{block}{A few important building blocks for regression}
+\bi
+        \myitem Interaction models
+        \myitem Transformations of predictors
+\ei
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{What is interaction?}
+
+\begin{block}{Definition of interaction}
+Interaction occurs when the relationship between two variables depends on the value of a third variable.
+
+\end{block}
+
+<<intModel, echo=FALSE, fig.height=3>>=
+x1 <- runif(100)
+x2 <- rep(0:1, each=50)
+y <- 3 + 2*x1 + 4*x1*x2 + rnorm(50)
+qplot(x1, y, color=factor(x2), geom=c("point", "smooth"), method="lm", sd=FALSE)
+@
+
+
+[Good overview: KNN pp. 306--313]
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Some real world examples?}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{How to include interaction in a MLR}
+
+
+Model A: $ y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \epsilon_i$
+
+
+Model B: $ y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i1}\cdot x_{i2} + \epsilon_i$
+
+\vspace{4em}
+
+\begin{block}{Key points}
+\bi
+        \myitem ``easily'' conceptualized with 1 continuous, 1 categorical variable
+        \myitem models possible with other variable combinations, but interpretation/visualization harder 
+        \myitem two variable interactions are considered ``first-order'' interactions (often used to define a class of models)
+        \myitem still a {\bf linear} model, but no longer a strictly {\bf additive} model
+\ei
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{How to interpret an interaction model}
+
+For now, assume $x_1$ is continuous, $x_2$ is 0/1 binary.
+
+Model A: $ y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \epsilon_i$
+
+Model B: $ y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i1}\cdot x_{i2} + \epsilon_i$
+
+\vspace{12em}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Example interaction model with FEV data}
+
+<<fevData, echo=FALSE>>=
+#dat <- read.table("~/Google Drive/teaching/methods2/datasets/FEV/fev.dat.txt")
+dat <- read.table("~/UMass Google Drive/teaching/methods2/datasets/FEV/fev.dat.txt")
+colnames(dat) <- c("age", "fev", "ht", "sex", "smoke")
+
+dat$sex <- factor(dat$sex, levels=0:1, labels=c("female", "male"))
+dat$smoke <- factor(dat$smoke, levels=0:1, labels=c("nonsmoker", "smoker"))
+
+@
+
+
+$$ fev_i = \beta_0 + \beta_1 age_{i} + \beta_2 ht_{i} + \beta_3 sex_{i2} + \beta_4 smoke_{i} + \beta_5 ht\cdot smoke_{i} + \epsilon_i$$
+
+<<intModels>>=
+mi1 <- lm(fev ~ age + ht + sex + smoke, data=dat)
+mi3 <- lm(fev ~ age + ht*smoke + sex, data=dat)
+c(AIC(mi1), AIC(mi3))
+round(summary(mi3)$coef,2)
+@
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Example interaction model with FEV data}
+
+<<fevPlot1, fig.height=4, tidy=FALSE>>=
+qplot(ht, fev, data=dat, color=smoke, 
+      geom=c("point", "smooth"), method="lm")
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Example interaction model with FEV data}
+The {\tt visreg} package plots not the data but the partial residuals (a.k.a. the adjusted variable) plot.
+
+<<fevPlot2, fig.height=4, message=FALSE>>=
+require(visreg)
+visreg(mi3, "ht", by="smoke")
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Example interaction model with FEV data}
+
+<<fevPlot3, fig.height=4>>=
+visreg(mi3, "ht", by="smoke", overlay=TRUE)
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Overview of variable transformations}
+
+
+\begin{block}{The problems}
+\bi
+        \myitem Non-linearity between $X$ and $Y$  $\longrightarrow$ transform $X$
+        \myitem Skewed distribution of $X$s/points with high leverage $\longrightarrow$ transform $X$
+        \myitem Non-constant variance $\longrightarrow$ transform $Y$
+\ei
+\end{block}
+
+[More info: KNN Ch 3.9, pp. 129--137]
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Transforming your $X$ variables}
+
+Transforming predictor variables can help with constant-variance non-linear relationships.
+
+<<xtrans, echo=FALSE, fig.height=4, message=FALSE>>=
+x <- c(runif(100, 0, 5), runif(100, 0, 400), runif(100, .03, .5))
+grp <- rep(1:3, each=100)
+y <- x^2*(grp==1) + sqrt(x)*(grp==2) + 1/x*(grp==3) + rnorm(300, sd=2)
+dd <- data.frame(x=x, y=y, grp1=grp)
+ggplot(dd) + geom_point(aes(x=x, y=y)) + facet_grid(.~grp1, scales="free") + geom_smooth(aes(x, y), span=.9)
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Transforming your $X$ variables}
+
+
+<<xtrans2, echo=FALSE, fig.height=4, message=FALSE>>=
+dd$newx <- x^2*(grp==1) + sqrt(x)*(grp==2) + 1/x*(grp==3)
+ggplot(dd) + geom_point(aes(x=newx, y=y)) + 
+        facet_grid(.~grp1, scales="free") + 
+        geom_smooth(aes(newx, y), span=.9)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{$\beta$ interpretations with transformed $X$s}
+
+Transforming predictor variables can help with non-linearities, but can make coefficient interpretations hard.
+
+\begin{block}{Possible solutions}
+\bi
+        \myitem Interpret $\beta$s qualitatively across a region of interest: ``We found strong evidence for a inverse association, where values of $Y$ decreased inversely proportional to $X$ across the observed range $(a, b)$.
+        \myitem Occasionally, a ``one unit change in $X$'' can be meaningful: e.g. $\log_a X$. A one unit change in $\log_a X$ indicates a $a$-fold increase in $X$.
+\ei
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{$\beta$ interpretations with transformed $X$s}
+
+Transforming predictor variables can help with non-linearities, but can make coefficient interpretations hard.
+
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Transforming $Y$s for non-constant variance}
+
+\begin{block}{What to do ...}
+\bi
+        \myitem Nothing; just use least squares and bootstrap
+        \myitem Use weighted LS, GLS (Methods 3?)
+        \myitem Use a variance stabilizing transformation
+        \myitem Consider a generalized linear model (more soon)
+\ei
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]{Box-Cox Transformations}
+
+Outcome is raised to the $\lambda$ power: 
+$$ y^\lambda_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \epsilon_i$$
+
+\bi
+        \myitem Estimate $\lambda$, a new parameter, by maximum likelihood.
+        \myitem Some well-known choices of $\lambda$: 2, -1, 1/2
+        \myitem By definition, when $\lambda=0$, we specify $y^\lambda_i= \log_e y_i$
+\ei
+
+[More detailed info: KNN Ch 3.9, pp. 134--137]
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]{Wrap-up}
+
+\begin{block}{New instruments for your regression tool-kit}
+\bi
+        \myitem Interactions and data transformations are common extensions/additions to regression models in practice. 
+        \myitem Both are simple to implement, challenging to interpret correctly!
+        \myitem But, you may not always need a interpretation, e.g. you might just want a good prediction.
+\ei
+\end{block}
+
+\end{frame}
+
+
+\end{document}

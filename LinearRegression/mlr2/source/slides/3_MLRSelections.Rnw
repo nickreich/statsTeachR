@@ -1,0 +1,461 @@
+%% Module 2 beamer/knitr slides
+%% Biostatistics in Practice workshop, January 2014
+%% Nicholas Reich: nick [at] schoolph.umass.edu
+
+
+\documentclass[table]{beamer}
+
+
+\input{../standard_knitr_beamer_preamble}
+
+%        The following variables are assumed by the standard preamble:
+%	Global variable containing module name:
+\title{MLR Model Selection}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{mlr2}
+%	Global variable containing author name:
+\author{Nicholas G Reich, Jeff Goldsmith}
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\_US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{}
+
+\input{../shortcuts}
+\usepackage{bbm}
+\hypersetup{colorlinks=TRUE, urlcolor=blue}
+
+%%%%%%%% IMPORTANT -- MUST HAVE [fragile] for some/all frames chunks to have output work correctly. 
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+library(knitr)
+opts_chunk$set(fig.path='figure/beamer-',fig.align='center',fig.show='hold',size='footnotesize')
+@
+
+
+\begin{frame}[plain]
+        \titlepage
+\end{frame}
+
+<<ggplot2, echo=FALSE, message=FALSE>>=
+require(ggplot2)
+theme_set(theme_bw())
+@
+
+
+\begin{frame}{Today's Lecture}
+
+\bi
+        \myitem Model selection vs. model checking
+	\myitem Stepwise model selection
+	\myitem Criterion-based approaches
+\ei
+
+\vskip2em
+
+Model checking and selection: KNN, Chapters 9 and 10.
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Model selection vs. model checking}
+
+\begin{block}{Assume $ y | \bx = f(\bx) + \epsilon$}
+\bi
+        \myitem model selection focuses on how you construct $f(\cdot)$;
+        \myitem model checking asks whether the $\epsilon$ match the assumed form.
+\ei
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Why are you building a model in the first place?}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Model selection: considerations}
+
+\begin{block}{Things to keep in mind...}
+\bi
+        \myitem {\bf Why am I building a model?} Some common answers
+        \bi
+        	\item Estimate an association
+		\item Test a particular hypothesis
+		\item Predict new values
+	\ei
+	\myitem What predictors will I allow?
+        \myitem What predictors are needed?
+	\myitem What forms for $f(x)$ should I consider?
+\ei
+
+Different answers to these questions will yield different final models.
+
+\end{block}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}{Model selection: realities}
+
+\centering {\em All models are wrong. Some are more useful than others.} \\ - George Box
+
+
+\bi
+        \myitem If we are asking which is the ``true" model, we will have a bad time
+	\myitem In practice, issues with sample size, collinearity, and available predictors are real problems
+	\myitem It is often possible to differentiate between better models and less-good models, though
+\ei
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Basic idea for model selection}
+
+\begin{block}{A very general algorithm}
+\bi
+        \myitem Specify a ``class'' of models
+        \myitem Define a criterion to quantify the fit of each model in the class
+        \myitem Select the model that optimizes the criterion you're using
+\ei
+\end{block}
+
+Again, we're focusing on $f(x)$ in the model specification. Once you've selected a model, you should subject it to regression diagnostics -- which might change or augment the class of models you specify or alter your criterion.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Classes of models}
+
+\begin{block}{Some examples of classes of models}
+\bi
+        \myitem Linear models including all subsets of $x_1, ..., x_p$
+        \myitem Linear models including all subsets of $x_1, ..., x_p$ and their first order interactions
+        \myitem All functions $f(x_1)$ such that $f^{\prime\prime}(x_1)$ is continuous
+        \myitem Additive models of the form $f(\bx) = f_1(x_1)+ f_2(x_2)+ f_3(x_3) ...$ where $f_{k}^{\prime\prime}(x_{k})$ is continuous
+\ei
+\end{block}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Popular criteria}
+
+\bi
+        \myitem Adjusted $R^2$
+        \myitem Residual mean square error
+        \myitem Akaike Information Criterion (AIC)
+        \myitem Bayes Information Criterion (BIC)
+	\myitem Prediction RSS (PRESS)
+        \myitem $F$- or $t$-tests (stepwise selection)
+\ei
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Adjusted $R^2$}
+\bi
+        \myitem Recall:
+	$$R^2 = 1 - \frac{RSS}{TSS}$$
+	\myitem Definition of adjusted $R^2$:
+	\beqa
+		R_a^2 &=& 1 - \frac{RSS/(n-p-1)}{TSS/(n-1)} = 1 - \frac{\hat\sigma^2_{model}}{\hat\sigma^2_{null}} \\
+			&=& 1 - \frac{n-1}{n-p-1}(1-R^2)
+	\eeqa
+	\myitem Minimizing the standard error of prediction means minimizing $\hat\sigma^2_{model}$ which in turn means maximizing $R_a^2$
+	\myitem Adding a predictor will not necessarily increase $R_a^2$ unless it has some predictive value
+\ei
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Residual Mean Square Error}
+
+\begin{block}{Equivalent to Adjusted $R^2$...}
+
+$$ RMSE = \frac{RSS}{n-p-1} $$
+
+Can choose either based on 
+\bi
+        \myitem the model with minimum RMSE, or
+        \myitem the model that has RMSE approximately equal to the MSE from the full model
+\ei
+\end{block}
+
+\centering Note: minimizing RMSE is equivalent to maximizing Adjusted $R^2$
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Sidebar: Confusing notation about $p$}
+
+\begin{block}{$p$ can mean different things}
+\bi
+        \myitem $p$ can be the number of covariates you have in your model (not including your column of 1s and the intercept
+        \myitem $p$ can be the number of betas you estimate. 
+\ei
+
+In these slides, $p$ is the former: the number of covariates.
+
+\end{block}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{AIC}
+
+AIC (``An Information Criterion") measures goodness-of-fit through RSS (equivalently, log likelihood) and penalizes model size:
+$$ AIC = n \log(RSS/n) + 2(p+1) $$
+\bi
+        \myitem Small AIC's are better, but scores are not directly interpretable
+        \myitem Penalty on model size tries to induce {\it parsimony}
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Example of AIC in practice}
+
+\includegraphics[width=.8\linewidth]{./Figs/AICExample.pdf}
+
+\tiny Reich et al. (2013) {\em Journal of the Royal Society Interface}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{BIC}
+
+BIC (``Bayes Information Criterion") similarly measures goodness-of-fit through RSS (equivalently, log likelihood) and penalizes model size:
+$$ BIC = n \log(RSS/n) + (p+1) \log(n) $$
+\bi
+        \myitem Small BIC's are better, but scores are not directly interpretable
+	\myitem AIC and BIC measure goodness-of-fit through RSS, but use different penalties for model size. They won't always give the same answer
+\ei
+
+
+Bonus link! \href{http://emdbolker.wikidot.com/blog:aic-vs-bic}{Bolker on AIC vs. BIC}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Example of BIC in practice}
+
+\includegraphics[width=\linewidth]{./Figs/modelSelectionExample.png}
+
+\tiny  Vasantha and Venkatesan (2014) {\em PLoS ONE}
+
+\end{frame}
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{PRESS}
+
+Prediction residual sum of squares is the most clearly focused on prediction
+$$ PRESS = \sum (y_i - \bx^{T}_i \hat{\bbeta}_{(-i)})^{2} $$
+
+Looks computationally intensive, but for linear regression models this is equivalent to
+$$ PRESS = \sum \left( \frac{\hat\epsilon_i}{1-h_{ii}} \right)^{2} $$
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Example of model selection in practice}
+
+\includegraphics[width=.8\linewidth]{./Figs/modelSelectionExample2.png}
+
+\tiny  Croudace et al (2003) {\em Amer J Epidemiology}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Model building is an art}
+
+\begin{block}{Putting this all together requires}
+
+\bi
+        \myitem knowledge of the process generating the data
+        \myitem detailed data exploration 
+        \myitem checking assumptions 
+        \myitem careful model building
+        \myitem patience patience patience
+\ei
+
+\end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}{Sequential methods: PROCEED WITH CAUTION}
+
+\begin{block}{Stepwise selection methods are dangerous if you want accurate inferences}
+\bi
+        \myitem There are many potential models -- usually exhausting the model space is difficult or infeasible
+	\myitem Stepwise methods don't consider all possibilities
+        \myitem One paper$^*$ showed that stepwise analyses produced models that...
+        \bi
+                \myitem represented noise 20-75\% of the time
+                \myitem contained $<$50\% of actual predictors
+                \myitem correlation btw predictors $\longrightarrow$ including more predictors
+                \myitem number of predictors correlated with number of noise predictors included
+        \ei
+\ei
+\end{block}
+\tiny $^*$ Derksen and Keselman (1992) {\em British J Math Stat Psych}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Sequential methods: ``forward selection''}
+
+\bi
+        \myitem Start with ``baseline" (usually intercept-only) model
+	\myitem For every possible model that adds one term, evaluate the criterion you've settled on
+	\myitem Choose the one with the best ``score" (lowest AIC, smallest p-value)
+	\myitem For every possible model that adds one term to the current model, evaluate your criterion
+	\myitem Repeat until either adding a new term doesn't improve the model or all variables are included
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Sequential methods: ``backward selection/elimination''}
+
+\bi
+	\myitem Start with every term in the model
+	\myitem Consider all models with one predictor removed
+	\myitem Remove the term that leads to the biggest score improvement
+	\myitem Repeat until removing additional terms doesn't improve your model
+\ei
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{MORE concerns with sequential methods}
+
+\bi
+        \myitem It's common to treat the final model as if it were the only model ever considered -- to base all interpretation on this model and to assume the inference is accurate
+	\myitem This doesn't really reflect the true model building procedure, and can misrepresent what actually happened
+	\myitem Inference is difficult in this case; it's hard to write down a statistical framework for the entire procedure
+	\myitem Predictions can be made from the final model, but uncertainty around predictions will be understated
+	\myitem P-values, CIs, etc will be incorrect 
+\ei
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Variable selection in polynomial models}
+
+A quick note about polynomials. If you fit a model of the form
+$$ y_i = \beta_0 + \beta_1 x + \beta_2 x^2 + \epsilon_i$$
+and find the quadratic term is significant but the linear term is not...
+\bi
+        \myitem You should still keep the linear term in the model
+	\myitem Otherwise, your model is sensitive to centering -- shifting $x$ will change your model
+	\myitem Using orthogonal polynomials helps with this
+\ei
+
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Sample size can limit the number of predictors}
+
+\begin{block}{$p$ (total number of $\beta$s) should be $<\frac{m}{15}$, where }
+
+\begin{table}[htdp]
+\begin{center}
+\begin{tabular}{ll}
+Type of Response Variable & Limiting sample size $m$\\
+\hline
+Continuous & $n$ (total sample size)\\
+Binary & $min(n_1, n_2)$\\
+Ordinal ($k$ categories) & $n-\frac{1}{n^2}\sum_{i=1}^k n_i^3$\\
+Failure (survival) time & number of failures
+\end{tabular}
+\end{center}
+\end{table}%
+
+\tiny Table adapted from Harrel (2012) notes from ``Regression Modeling Strategies'' workshop.
+
+\end{block}
+
+
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{A more modern approach: shrinkage/penalization}
+
+\begin{block}{Penalized regression} 
+
+\bi
+        \myitem adds an explicit penalty to the least squares criterion
+	\myitem keeps regression coefficients from being too large, or can shrink coefficients to zero
+        \myitem Keywords for methods: LASSO, Ridge Regression
+        \myitem More in Methods 3!
+\ei
+\end{block}
+
+Much of modern statistics is devoted to figuring out what to do when $p\geq n$. 
+
+\end{frame}
+
+\end{document}

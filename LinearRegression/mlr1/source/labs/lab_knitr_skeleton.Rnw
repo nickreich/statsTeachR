@@ -1,0 +1,88 @@
+%       **************************************************************
+%	statsTeachR module: [YOUR MODULE NAME HERE]
+%	Document: [e.g. Lab 1]
+%	Author: [YOUR NAME]
+%	Last modified: [DATE]
+%	**************************************************************
+
+\documentclass[12pt, letterpaper]{article}
+
+%	Use the standard preamble for all statsTeachR modules.
+%		(\input, not \include, as \include can't access 
+%		things in higher-level directories since it needs 
+%		write permission there, which it doesn't have; and 
+%		in some settings the preamble may be in a higher-level
+%		directory than the source file.)
+%	This path assumes the preamble is in the parent directory,
+%		modify this if that changes.
+\input{../standard_knitr_preamble}
+
+%	The following variables are assumed by the standard preamble:
+
+%	Global variable containing module name:
+\newcommand{\ModuleName}{Discrete random variables}
+%	Global variable containing module shortname:
+\newcommand{\ModuleShortname}{discrete.rv}
+%	Global variable containing document type:
+\newcommand{\DocumentName}{Lab 1}
+%	Global variable containing author name(s):
+\newcommand{\AuthorName}{Harrel E. Blatt}
+%	(Can't use the native \author \title etc. because those are 
+%	hard to access in the article document type.)
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{}
+
+
+
+%	******	Document body begins here	**********************
+
+
+
+\begin{document}
+%\SweaveOpts{concordance=TRUE}
+
+\begin{raggedright}
+
+%	Need this so the first page gets its special header:
+\thispagestyle{plain}
+
+
+
+\section{Section header here}
+
+Some text...
+
+\begin{enumerateCondensed}
+
+        \item{First, ...}
+
+	\item{Second, ...}
+
+\end{enumerateCondensed}
+
+\exercise
+
+\begin{enumerateCondensed}
+
+	\item{blah blah}
+
+	\item{blah di blah}
+
+\end{enumerateCondensed} 
+
+\exercise
+
+<<myChunk>>=
+mean(rnorm(100))
+@
+
+
+\end{raggedright}
+\end{document}
+

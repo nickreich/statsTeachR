@@ -1,0 +1,213 @@
+%% beamer/knitr slides 
+%% for Statistical Modeling and Data Visualization course @ UMass
+%% Nicholas Reich: nick [at] schoolph.umass.edu
+
+
+\documentclass[table]{beamer}
+
+
+\input{../standard_knitr_beamer_preamble}
+
+%	The following variables are assumed by the standard preamble:
+%	Global variable containing module name:
+\title{Overview of regression}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{introRegression}
+%	Global variable containing author name:
+\author{Nicholas G Reich, Jeff Goldsmith}
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{}
+
+
+\input{../shortcuts}
+
+\hypersetup{colorlinks,linkcolor=,urlcolor=MainColor}
+
+
+%	******	Document body begins here	**********************
+
+\begin{document}
+
+%	Title page
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%	******	Everything through the above line must be placed at
+%		the top of any TeX file using the statsTeachR standard
+%		beamer preamble. 
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{What is regression?}
+
+"...to understand as far as possible with the available data how the conditional distribution of the response $y$ varies across subpopulations  determined by the possible values of the predictor or predictors." -- Cook and Weisberg (1999)
+
+\vspace{2em}
+
+Good overview \href{http://en.wikipedia.org/wiki/Regression_analysis}{on Wikipedia}.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{What is regression?}
+
+\bi
+        \myitem The goal is to learn about the relationship between a covariate (predictor) of interest and an outcome of interest.
+	\bi
+		\myitem Focus on prediction
+		\myitem Focus on description
+	\ei
+	\myitem Regression is an exercise in inferential statistics: we are drawing evidence and conclusions from data about ``noisy'' systems.
+\ei
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Circle of Life}
+
+\begin{figure}[t]
+    \includegraphics[width=.8\textwidth]{./Figs/CircleOfLife.pdf}  
+\end{figure}
+
+\end{frame} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{What we want in regression}
+
+Given some data $y, x_1, x_2, \ldots x_p$, we are interesting finding a likely value for $y$ given the value of predictors $x  \equiv x_1, x_2, \ldots x_p$.
+\bi
+	\myitem Often, but not always, $y$ is continuous. (Called outcome, response, ``dependent variable").
+	\myitem The $x$'s can be continuous, binary, categorical. (Called predictor, covariate, ``independent variable").
+	\myitem We want $\mathbb E(y | x) = f(x)$; we observe $y = f(x) + \epsilon$.
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Example data: heights of mothers and daughters}
+ Heights of $n=1375$ mothers in the UK under the age of 65 and one of their adult daughters over the age of 18 (collected and organized during the period 1893--1898 by the famous statistician Karl Pearson)
+ 
+ 
+<<showHeights, message=FALSE>>=
+require(alr3)
+data(heights)
+head(heights)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]{Example data: heights of mothers and daughters}
+ 
+<<plotHeights, message=FALSE, fig.height=4, tidy=FALSE>>=
+require(ggplot2)
+qplot(Mheight, Dheight, data=heights, col="red", 
+      alpha=.5) + theme(legend.position="none")
+@
+
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Regression model}
+
+The process of using data to describe the relationship between outcomes and predictors is called modeling.
+\bi
+	\myitem Models are models, not reality.
+	\myitem ``All models are wrong, but some are useful."
+	\myitem Introduce structure to $f(x)$ to make the problem of estimation easier (this also introduces elements not found in the data, including judgement calls about important features and assumptions about the world).
+	\myitem We largely focus on {\em parametric models} $f(x) = f(x; \beta)$ and worry about estimating $\beta$.
+\ei
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Linear Regression Models}
+
+A linear regression model is a particular type of parametric regression.
+\bi
+        \myitem Assume $f(x; \beta) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots$
+	\myitem Focus is on $\beta_0, \beta_1, \ldots$
+	\myitem ``Linear" refers to the $\beta$'s, not the $x$'s: 
+	\bi
+		\myitem $f(x) = \beta_0 + \beta_1 x + \beta_2 x^2$ is a linear model
+		\myitem $f(x) = \beta_0 + x^{\beta_1}$ is not
+		%\myitem $f^{*}(x) = \beta_0^{*} + \beta_1 x^{*}$
+	\ei
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Why is linear regression so popular?}
+
+\bi
+	\myitem Easy to implement
+	\myitem Lots of theory
+	\myitem Straightforward interpretations
+	\myitem Surprisingly flexible
+	\myitem Good approximation in many cases
+\ei
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{What do we need to assume?}
+
+
+\begin{block}{Typical assumptions for a SLR model}
+\bi
+        \myitem A1: The model: e.g.  $y_i = f(x; \beta) +\epsilon_i= \beta_0 + \beta_1 x_1 + \epsilon_i$
+	\myitem A2: Unbiased errors: $\mathbb E[\epsilon_i|x_i]  = \mathbb E[\epsilon_i] = 0$   
+        \myitem A3: Uncorrelated errors: $cov(\epsilon_i, \epsilon_j)=0$ for $i\neq j$.
+	\myitem A4: Constant variance: $ Var[y_i|x_i] = \sigma^2$
+	\myitem A5: Probability distribution: e.g. $\epsilon_i \stackrel{iid}{\sim} N(0, \sigma^2)$.
+        \myitem A6: Representative sampling: generalize to population.
+\ei
+\end{block}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Things to come}
+
+\bi
+	\myitem Where do estimates $\hat{\beta}_0, \hat{\beta}_1$ come from?
+	\myitem How do we draw inference about these estimates?
+	\myitem What about more complex models?
+\ei
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end{document}
