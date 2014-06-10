@@ -1,0 +1,9 @@
+Name: HPC Series
+Title: Biostatistics in Practice: Research Training in High-Performance Computing with R
+Date: 2014-02-07
+Author: Andrea Foulkes <foulkes@schoolph.umass.edu> Gregory Matthews <gregory.matthews@schoolph.umass.edu> Nicholas Reich <nick@schoolph.umass.edu> Emily Ramos <eramos@schoolph.umass.edu>
+Version: v1.0
+Description: This series offers participants a foundational curriculum on statistical computing using R, an open-source and freely-available statistical programming language, in a high performance computing environment. Emphasis is placed on “big data” applications in biomedical and public health research settings.This short course was jointly sponsored by the Massachusetts Green High Performance Computing Center (MGHPCC), a new state- of-the-art facility dedicated to research-oriented computing. This course offers the first opportunity for life sciences researchers to learn how to effectively utilize the MGHPCC facility for their research and become early-adopters of this world-class resource. There are three modules of this series. See OVERVIEW for more information.
+Keywords: high performance computing, biostatistics in practice, reproducible, research, reproducibility, MGHPCC, HPC, big data, knitr, ggplot, github, sweave, rstudio, parallel, multicore,
+Depends: [optional, any other modules that this depends on] 
+Suggests: This series contains three modules. It is suggested to use each module in order.

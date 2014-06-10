@@ -1,0 +1,16 @@
+This HPC Series was presented as a one day short course, Biostatistics in Practice: Research Training in High-Performance Computing with R, at the Massachusetts Green High Performance Computing Center (MGHPCC) on Februrary 7, 2014.
+
+This series contains three modules:
+Module 1: Principles of reproducible research with R; 
+Module 2: Introduction to cluster computing with R; and
+Module 3: Simulation and parallel computing with R.
+
+It is suggested to present these modules in order. One might present this series in the following way:
+1. Module 1 slides
+2. Explore concepts
+3. Break
+4. Module 2 slides
+5. Module 2 labs
+6. Break
+7. Module 3 slides
+8. Explore concepts
