@@ -4,6 +4,6 @@ Date: 2014-02-07
 Author: Andrea Foulkes <foulkes@schoolph.umass.edu>, Gregory Matthews <gregory.matthews@schoolph.umass.edu>, Nicholas Reich <nick@schoolph.umass.edu>, Emily Ramos <eramos@schoolph.umass.edu>
 Version: v1.0
 Description: This module contains information on the principles and practice of reproducible research with R. This module is the first module of the HPC series. This module was presented at a one day short course, Biostatistics in Practice: Research Training in High-Performance Computing with R, given at the Massachusetts Green High Performance Computing Center (MGHPCC) on Februrary 7, 2014. The topics covered in this module include: Version control (GitHub), dynamic documents in R (R Markdown, Sweave, Knitr), Rstudio and ggplot2.
-Keywords: Github, knitr, sweave, markdown, dynamic documents, version control, reproducibility, HPC, high performance computing, reproducible, research,
+Keywords: Github, knitr, sweave, markdown, dynamic documents, version control, reproducibility, HPC, high performance computing, reproducible.
 Depends: [optional, any other modules that this depends on] 
 Suggests: This module is suggested to be used with the HPC Series. This is the first of three modules of the HPC Series.
