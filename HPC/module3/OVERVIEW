@@ -1,9 +1,9 @@
 Name: HPC Module 3
-Title: [Insert Title]
+Title: Cluster Computing
 Date: 2014-02-07
 Author: Gregory Matthews <gregory.matthews@schoolph.umass.edu>, Nicholas Reich <nick@schoolph.umass.edu>, Andrea Foulkes <foulkes@schoolph.umass.edu>,   Emily Ramos <eramos@schoolph.umass.edu>
 Version: v1.0
-Description: This module contains information on [insert information here]. This module is the third module of the HPC series. This module was presented at a one day short course, Biostatistics in Practice: Research Training in High-Performance Computing with R, given at the Massachusetts Green High Performance Computing Center (MGHPCC) on Februrary 7, 2014. The topics covered in this module include: [insert information here].
-Keywords:  HPC, high performance computing, batch, MGHPCC, [insert keywords].
+Description: This module contains information on cluster computing, specifically using MGHPCC. This module is the third module of the HPC series. This module was presented at a one day short course, Biostatistics in Practice: Research Training in High-Performance Computing with R, given at the Massachusetts Green High Performance Computing Center (MGHPCC) on Februrary 7, 2014. The topics covered in this module include: Parallel computing, cluster computing, MGHPCC and Umass Cluster, cluster workflow, using VPN, running in Batch mode, transferring data, and submitting a job.
+Keywords:  HPC, high performance computing, batch, MGHPCC, cluster, parallel, vpn, job, transferring.
 Depends: HPC Module 1 and 2 should be completed before HPC Module 3. 
 Suggests: This module is suggested to be used with the HPC Series. This is the third of three modules of the HPC Series.

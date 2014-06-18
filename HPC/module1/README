@@ -1,5 +1,5 @@
 This module was presented at a one day short course, Biostatistics in Practice: Research Training in High-Performance Computing with R, given at the Massachusetts Green High Performance Computing Center (MGHPCC) on Februrary 7, 2014.
-This module contains information on the principles and practice of reproducible research with R. This module is the first module of the HPC series. This module contains Principles and Practice of Reproducible Research with R slides.  
+This module contains information on the principles and practice of reproducible research with R. This module is the first module of the HPC series. This module contains Principles and Practice of Reproducible Research with R slides, and an example Rmarkdown file/lab.  
 
 It is suggested to present the modules of the HPC series in order. One might present this module in the following way:
 1. Module 1 slides

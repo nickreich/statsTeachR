@@ -1,0 +1,36 @@
+An example R Markdown file with Mother/Daughter heights data
+========================================================
+### Biostatistics in Practice HPC workshop, February 2014
+
+```{r loadData, message=FALSE}
+require(alr3)
+data(heights)
+```
+The heights dataset contains `r nrow(heights)` observations of heights of a mother and her daughter. This dataset was compiled by the statistician Karl Pearson in the late 1800s. To make this a more interesting example of a permutation test, we will limit our sample size and only consider a random sample of 200 rows of the dataset. We will start by describing the data visually with a simple graphic.
+
+```{r}
+summary(heights)
+```
+
+Now let's plot the data using ggplot2.  First we're going to plot side by side boxplots of the mother's heights next to the daughter's heights.  
+
+```{r}
+require(ggplot2)
+heightStack <- data.frame(height = c(heights$Mheight,heights$Dheight),who = factor(c(rep("Mother",1375),rep("Daughter",1375)),levels=c("Mother","Daughter")))
+ggplot(heightStack,aes(who,height)) + geom_boxplot(outlier.colour="darkgreen",aes(fill=who)) 
+```
+
+Now we'll do a scatter plot of mother's heights versus daughter's heights. The first line in the code below changes the theme.  qplot acts similarly to base R command plot.  
+
+```{r, message=FALSE, fig.height=4, fig.width=5}
+theme_set(theme_bw()) ## sets default white background theme for ggplot
+qplot(Mheight, Dheight, data=heights, col="red", alpha=.5) + theme(legend.position="none") 
+```
+
+We can also do this using ggplot.  
+
+```{r describeData, message=FALSE, fig.height=4, fig.width=5}
+theme_set(theme_bw()) ## sets default white background theme for ggplot
+ggplot(heights,aes(Mheight, Dheight)) + geom_point(col="red",alpha=0.5) + stat_smooth()
+```
+

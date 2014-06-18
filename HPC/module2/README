@@ -1,5 +1,5 @@
 This module was presented at a one day short course, Biostatistics in Practice: Research Training in High-Performance Computing with R, given at the Massachusetts Green High Performance Computing Center (MGHPCC) on Februrary 7, 2014.
-This module contains information on simulation and parallelization in R. This module is the first module of the HPC series. This module contains Simulation and Parallelization in R slides, Permutation Test lab and corresponding data, .  
+This module contains information on simulation and parallelization in R. This module is the first module of the HPC series. This module contains Simulation and Parallelization in R slides, Permutation Test 2 lab, corresponding data, and parallel exercises (permTest2_doMC, permTest2_doParallel and permTest2_mcapply).  
 
 It is suggested to present the modules of the HPC series in order. One might present this module in the following way:
 1. Module 1 slides
