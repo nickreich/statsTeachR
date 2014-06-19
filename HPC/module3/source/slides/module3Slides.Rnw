@@ -281,7 +281,7 @@
 
 \begin{frame}{Submiting jobs to the cluster: Local}
 \begin{itemize}
-\item An example shell script is in \\ {\tt BiPSandbox/module3/submitLocalParallelJob.sh}. 
+\item An example shell script is in \\ {\tt module3/labs/submitLocalParallelJob.sh}. 
 \item Here we submit to the short queue.
 \item Commands to submit from within a .sh file is the same as when submitting from the command line: \\ {\tt bsub $<$ submitLocalParallelJob.sh}
 \end{itemize}
@@ -292,7 +292,7 @@
 \begin{itemize}
 \item We can also specify options in the shell script that we submit to the LSF scheduler.  
 \item An example shell script is in \\
-{\tt BiPSandbox/module3/submitDistrParallelJob.sh}. 
+{\tt module3/labs/submitDistrParallelJob.sh}. 
 \item Commands to submit is again: \\ {\tt bsub $<$ submitDistrParallelJob.sh}
 \item ``Proper'' way to distribute your job is using something like MPI.
 \item In this example, output is also distributed, less convenient.

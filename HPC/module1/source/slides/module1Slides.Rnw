@@ -81,12 +81,6 @@ Data Sciences for the Life Sciences in a High Performance Computing Environment
 \item \scriptsize VPN and ssh to MGHPCC; Data/code transfer; Parallel vs cluster computing; Submitting jobs (single and distributed)
 \end{itemize}
 
-\bigskip
-\item[] \underline{\sc Module 4}: \hfill 3:30PM  -- 4:45 PM
-
-{\bf Topics in Big Data Sciences}
-\begin{itemize}
-\item \scriptsize Genome wide association data overview; Lab exercise applying workshop material
 \end{itemize}
 
 \end{enumerate}
@@ -213,7 +207,7 @@ Foundational training in reproducible research includes rigorous instruction in:
 \begin{enumerate}
 \item Analysis and visualization of data through literate programming (Module 1 \& 2);
 \item Dissemination of open-source and extensible code, documentation, and, whenever possible, data \\ (Modules 1 \& 2);
-\item Basic statistical literacy, including characterization of uncertainty using sound statistical and computational principles (Modules 2, 3 \& 4).
+\item Basic statistical literacy, including characterization of uncertainty using sound statistical and computational principles (Modules 2 \& 3).
 \end{enumerate}
 \end{frame}
 
@@ -405,7 +399,7 @@ Demo...
 
 \begin{block}{Demo... }
 \begin{itemize}
-        \item clone the BiPSandbox repository from GitHub
+        \item clone a repository from GitHub
         \item simple commit/push/pull examples
 \end{itemize}
 \end{block}

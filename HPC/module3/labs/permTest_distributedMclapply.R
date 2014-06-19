@@ -10,7 +10,7 @@ nCores <- 10
 
 
 
-setwd("/Users/gregorymatthews/Dropbox/BiPSandbox/code")
+setwd("/Users/module3/labs")
 #setwd("/home/ngr67a/BiP/")
 hts <- read.csv("heights.csv")
 

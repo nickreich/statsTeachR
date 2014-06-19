@@ -293,7 +293,7 @@ summary(mod2)$coefficients
 
 \begin{itemize}
 \item We have provided code for you to adapt and run a permutation test.
-\item {\tt BiPSandbox/module2/permTest2.Rmd}.
+\item {\tt module2/labs/permTest2.Rmd}.
 \end{itemize}
 
 \end{frame}
@@ -369,10 +369,10 @@ detectCores()
 
 \begin{itemize}
 \item We have provided code for you to adapt and run a permutation test in parallel: \\
-{\tt BiPSandbox/module2/permTest2\_doMC.R}\\
-{\tt BiPSandbox/module2/permTest2\_doParallel.R}\\
-{\tt BiPSandbox/module2/permTest2\_mclapply.R}
-\item Let's try to learn about different parallel computing speeds through an old-school distributed computing experiment: see {\tt BiPSandbox/module2/localParallelData.csv}
+{\tt module2/labs/permTest2\_doMC.R}\\
+{\tt module2/labs/permTest2\_doParallel.R}\\
+{\tt module2/labs/permTest2\_mclapply.R}
+\item Let's try to learn about different parallel computing speeds through an old-school distributed computing experiment: see {\tt module2/labs/localParallelData.csv}
 \end{itemize}
 
 \end{frame}

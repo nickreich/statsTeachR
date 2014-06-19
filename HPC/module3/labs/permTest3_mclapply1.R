@@ -3,7 +3,7 @@
 ## Nicholas Reich and Gregory J. Matthews
 
 ##Change to YOUR ACCOUNT NAME!
-setwd("/home/gjm43a/module3")
+setwd("/module3/labs")
 heights <- read.csv("heights.csv")
 
 #require(foreach)
