@@ -1,18 +1,13 @@
 \documentclass{article}
 
-\input{../labStyle}
+\input{../statsTeachR_preamble_labs}
 
 \begin{document}
 
-<<setup, include=FALSE, cache=FALSE>>=
-hook_source = knit_hooks$get('source') # the following correct tilde display
-knit_hooks$set(source = function(x, options) {
-  txt = hook_source(x, options)
-  gsub('~', '\\\\mytilde', txt)
-})
-@
 
+%% TEACHERS SHOULD MODIFY THIS SECTION AS NEEDED.
 \license{This is a product of \href{http://statsteachr.org}{statsTeachR} that is released under a \href{http://creativecommons.org/licenses/by-sa/3.0}{Creative Commons Attribution-ShareAlike 3.0 Unported}. This lab was adapted for \href{http://statsteachr.org}{statsTeachR} by Nicholas Reich and Andrea Foulkes from a lab written by XXX.}
+
 
 
 \section*{Lab Title here}
@@ -30,7 +25,7 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 
         \item{First, ...}
 
-	\item{Second, ...}
+        \item{Second, ...}
 
 \end{enumerate}
 
@@ -45,9 +40,6 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 \end{itemize} 
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
 
-<<myChunk>>=
-mean(rnorm(100))
-@
 
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
 \end{document}

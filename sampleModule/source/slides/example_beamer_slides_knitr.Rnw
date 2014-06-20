@@ -14,7 +14,7 @@
 \documentclass[table]{beamer}
 
 
-\input{../standard_knitr_beamer_preamble}
+\input{../statsTeachR_knitr_beamer_preamble}
 
 %        The following variables are assumed by the standard preamble:
 
