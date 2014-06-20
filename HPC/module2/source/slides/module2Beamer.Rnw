@@ -10,23 +10,22 @@
 
 %        The following variables are assumed by the standard preamble:
 %	Global variable containing module name:
-\title{Simulation and parallelization in R}
+\title{Simulation and Parallelization in R}
 %	Global variable containing module shortname:
 %		(Currently unused, may be used in future.)
 \newcommand{\ModuleShortname}{simPar}
 %	Global variable containing author name:
 \author{Nicholas G Reich, Andrea S Foulkes, Gregory J Matthews}
 %	Global variable containing text of license terms:
-\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\_US }
 %	Instructor: optional, can leave blank.
 %		Recommended format: {Instructor: Jane Doe}
-\newcommand{\Instructor}{}
+\newcommand{\Instructor}{7 February 2014}
 %	Course: optional, can leave blank.
 %		Recommended format: {Course: Biostatistics 101}
-\newcommand{\Course}{}
+\newcommand{\Course}{Biostatistics in Practice: High-Performance Computing with R}
 
 %%%%%%%% IMPORTANT -- MUST HAVE [fragile] for some/all frames chunks to have output work correctly. 
-
 
 \begin{document}
 
@@ -52,9 +51,7 @@ theme_set(theme_bw())
 
 			\item{Simulate data from a parametric distribution.}
 
-			\item{Formulate a statistical model and simulate data from it.}
-
-			\item{Design and implement a simulation experiment to test a hypothesis.}
+			\item{Design and implement a resampling simulation experiment to test a hypothesis.}
                         
                         \item{Run simulations in parallel, when appropriate.}
                         
@@ -284,7 +281,7 @@ summary(mod2)$coefficients
                 \item Permute the $Y$s.
                 \item Re-run original analysis, store $\hat\beta_1^{(i)}$.
         \end{itemize}
-        \item Calculate fraction of the $\hat\beta_1^{(i)}$ as or more ``extreme'' than $\hat\beta_1$
+        \item Calculate fraction of the $\hat\beta_1^{(i)}$ as or more ``extreme'' than $\hat\beta_1$, from our ``null distribution'' of $\hat\beta_1$s.
 \end{itemize}
 \end{block}
 
@@ -296,7 +293,7 @@ summary(mod2)$coefficients
 
 \begin{itemize}
 \item We have provided code for you to adapt and run a permutation test.
-\item {\tt permTest.Rmd} in BiPSandbox repository.
+\item {\tt module2/labs/permTest2.Rmd}.
 \end{itemize}
 
 \end{frame}
@@ -333,7 +330,7 @@ summary(mod2)$coefficients
 \item Within a {\tt .R} script, call multiple cores (on your laptop, on a cluster node, etc...).
 \item Two simple implementations: 
 \begin{itemize}
-        \item {\tt foreach()} requiring {\tt doMC} and {\tt foreach} packages
+        \item {\tt foreach()} requiring {\tt doMC} (or {\tt doNWS} or {\tt doParallel})  and {\tt foreach} packages
         \item {\tt mclapply()} requiring {\tt parallel} package
 \end{itemize}
 \end{itemize}
@@ -360,6 +357,7 @@ detectCores()
 @
 \item Caveat 1: \# of cores may be less than the \# of simultaneous computational threads you could run.
 \item Caveat 2: You may not want to eat up all your local CPU with a computational job.
+\item Caveat 3: Some knowledgable people say noy to run things in parallel in the R GUI app. Instead, run using R CMD BATCH command line.
 \end{itemize}
 
 \end{frame}
@@ -370,8 +368,11 @@ detectCores()
 \begin{frame}{Hands-on exercise}
 
 \begin{itemize}
-\item We have provided code for you to adapt and run a permutation test in parallel: {\tt BiPSandbox/code/permTest\_foreach.R}
-\item Let's try to learn about different parallel computing speeds through an old-school distributed computing experiment: see {\tt BiPSandbox/code/localParallelData.csv}
+\item We have provided code for you to adapt and run a permutation test in parallel: \\
+{\tt module2/labs/permTest2\_doMC.R}\\
+{\tt module2/labs/permTest2\_doParallel.R}\\
+{\tt module2/labs/permTest2\_mclapply.R}
+\item Let's try to learn about different parallel computing speeds through an old-school distributed computing experiment: see {\tt module2/labs/localParallelData.csv}
 \end{itemize}
 
 \end{frame}
@@ -379,24 +380,26 @@ detectCores()
 
 
 
-\begin{frame}{}
+\begin{frame}{Recapping module learning goals}
+
+        \begin{block}{We have...}
+        	
+
+		\begin{itemize}
+
+\item{Simulated data from a parametric distribution.}
+
+\item{Used resampling theory and simulation techniques to conduct a permutation test.}
+
+\item{Run a simulation in parallel, on our laptops.}
+
+\item{Learned something about parallel computing along the way.}
+
+		\end{itemize}
+
+	\end{block}
 
 \end{frame}
-
-
-
-
-\begin{frame}{}
-
-\begin{itemize}
-
-\item generate new $Y_i$ from model without $\beta_1$. Either de novo or or from a bootstrap/permutation?
-\item fit model with $\beta_1$
-\item answer questions: how often do CIs for $\beta_1$ not cover zero (or p-val$<$.05)? fit model to real data and compare $\hat\beta_1$ to simulated $\hat\beta_1$s?
-\end{itemize}
-
-\end{frame}
-
 
 
 

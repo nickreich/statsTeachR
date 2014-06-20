@@ -1,4 +1,4 @@
-
+        
 \documentclass[table]{beamer}
 
 
@@ -27,12 +27,7 @@
 %	******	Document body begins here	**********************
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
 
-%	Title page
-\begin{frame}[plain]
-	\titlepage
-\end{frame}
 
 
 
@@ -41,7 +36,7 @@
 %		beamer preamble. 
 
 
-\begin{frame}{Welcome}
+\begin{frame}{}
 \huge {\sc Biostatistics in Practice (BiP) 2014}: \\
 
 \normalsize 
@@ -51,6 +46,14 @@ Data Sciences for the Life Sciences in a High Performance Computing Environment
 \bigskip
 \scriptsize \emph{Sponsored by the {\bf Graduate Program in Biostatistics at UMass Amherst}, the UMass Institute for Computational Biology, Biostatistics and Bioinformatics (ICB3) and the Massachusetts Green High Performance Computing Center (MGHPCC).}
 \end{frame}
+
+
+%        Title page
+\begin{frame}[plain]
+        \titlepage
+\end{frame}
+
+
 
 \begin{frame}{Agenda}
 
@@ -78,24 +81,46 @@ Data Sciences for the Life Sciences in a High Performance Computing Environment
 \item \scriptsize VPN and ssh to MGHPCC; Data/code transfer; Parallel vs cluster computing; Submitting jobs (single and distributed)
 \end{itemize}
 
-\bigskip
-\item[] \underline{\sc Module 4}: \hfill 3:30PM  -- 4:45 PM
-
-{\bf Topics in Big Data Sciences}
-\begin{itemize}
-\item \scriptsize Genome wide association data overview; Lab exercise applying workshop material
 \end{itemize}
 
 \end{enumerate}
 }\end{frame}
 
+
+
 \begin{frame}{Special Thanks...}
+
+\begin{block}{Individuals making this possible}
 \begin{itemize}
 \item John Goodhue
 \item Claire Christopherson
+\item Karen Utgoff
 \item Ralph Zottola
-\item Al Ritacco
+\item Al Ritacco \& Chris Hull
+\item UMass OIT 
+\begin{itemize}
+\item Chris Misra
+\item Jim Mileski
+\item Jason Houghton
+\item Genti Lagji
 \end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Special Thanks...}
+
+\begin{block}{Support provided by:}
+\begin{itemize}
+\item President's office S\&T Initiative
+\item Vice Chancellor Research \& Engagement
+\item UMass College of Natural Sciences
+\item UMass School of Public Health and Health Sciences
+\item MGHPCC
+\item UMass Graduate Program in Biostatistics
+\end{itemize}
+\end{block}
 \end{frame}
 
 \begin{frame}{Introductions}
@@ -112,11 +137,50 @@ Teaching Assistants:
 \item Steven Calderbank
 \item Eric Cohen
 \item Stephen Lauer
-\item Sara Nunez
+\item Sara Nu\~nez
 \item Emily Ramos
 \item Eric Reed
 \end{itemize}
 \end{frame}
+
+
+\begin{frame}{Where we are coming from}
+
+\begin{itemize}
+        \item UMass-Amherst
+                \begin{itemize}
+                        \item Biostatistics
+                        \item Mathematics and Statistics
+                        \item Linguistics
+                        \item Landscape Ecology
+                        \item Veterinary and Animal Sciences Department
+                        \item Political Science
+                        \item Resource Economics
+                        \item Biology
+                        \item Organismic and Evolutionary Biology
+                        \item Environmental Conservation
+                \end{itemize}                
+        \item UMass Medical School: Quantitative Health Sciences
+        \item Babson College
+        \item Northeastern University
+        \item Framingham Heart Study
+        \item Boston University
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Diverse background in R}
+
+\begin{figure}[t]
+    \includegraphics[width=\textwidth]{figures/Rbackground1}  
+\end{figure}
+\begin{figure}[t]
+    \includegraphics[width=\textwidth]{figures/Rbackground2}  
+\end{figure}
+
+\end{frame}
+
 
 \begin{frame}{Principles of Reproducible Research -- Definition}
 \emph{Reproducible research has been defined in the scientific community as published scientific work that can be recreated using code and data made available by the authors:} 
@@ -141,39 +205,100 @@ Teaching Assistants:
 \begin{frame}{Principles of Reproducible Research -- Training}
 Foundational training in reproducible research includes rigorous instruction in:
 \begin{enumerate}
-\item Analysis and visualization of data through literate programming (Module 1);
+\item Analysis and visualization of data through literate programming (Module 1 \& 2);
 \item Dissemination of open-source and extensible code, documentation, and, whenever possible, data \\ (Modules 1 \& 2);
-\item Basic statistical literacy, including characterization of uncertainty using sound statistical and computational principles (Modules 2, 3 \& 4).
+\item Basic statistical literacy, including characterization of uncertainty using sound statistical and computational principles (Modules 2 \& 3).
 \end{enumerate}
 \end{frame}
 
 
 \begin{frame}{Tools for reproducible data analysis with R}
 
+\begin{block}{Topics}
 \begin{itemize}
-        \item Version control: git \& GitHub.com
+        \item \textbf{R/RStudio}
+       \item Version control: git \& GitHub.com
+         \item ggplot2
         \item Dynamic documents: knitr, RMarkdown, Sweave
-        \item RStudio
-        \item ggplot2
+ \end{itemize}
+\end{block}
+
+\end{frame}
+
+
+
+%Opening R - some basics (getwd setwd)
+%Data Management
+\begin{frame}{Introduction to R}
+What is R?
+\begin{itemize}
+\item R is a language and environment for statistical computing and graphics. 
+\item Website: www.r-project.org
 \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%
+\begin{frame}{Introduction to R}
+Pros
+\begin{itemize}
+\item R is free.
+\item There are many packages for R.  Chances are someone has written it already. 
+\item Many cutting edge techniques are available very quickly.  
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%
+
+\begin{frame}{Introduction to R}
+Cons
+\begin{itemize}
+\item R is free.  This means there is no support for R.  
+\item This also means that you use a package at your own risk and you trust the author wrote the code correctly.  
+\item Takes a little while to learn.
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%
+%\begin{frame}
+%\includegraphics[scale=.54]{twitterMap.pdf}
+%\end{frame}
+\begin{frame}
+\frametitle{RStudio}
+What is Rstudio$^{TM}$?
+\begin{itemize}
+\item RStudio? is a free and open source integrated development environment (IDE) for R.
+\item rstudio.org
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{RStudio}
+
+Demo...
 
 \end{frame}
 
 
 
-\begin{frame}{Version control systems}
+%%%%%%%%%%%%%
 
-\begin{figure}[t]
-    \includegraphics[width=\textwidth]{figures/VCS/VCS001.jpg}  
-\end{figure}
 
-\end{frame}
 
-\begin{frame}{Version control systems}
+\begin{frame}{Tools for reproducible data analysis with R}
 
-\begin{figure}[t]
-    \includegraphics[width=\textwidth]{figures/VCS/VCS002.jpg}  
-\end{figure}
+\begin{block}{Topics}
+\begin{itemize}
+        \item R/RStudio
+       \item \textbf{Version control: git \& GitHub.com}
+         \item ggplot2
+        \item Dynamic documents: knitr, RMarkdown, Sweave
+ \end{itemize}
+\end{block}
 
 \end{frame}
 
@@ -192,12 +317,76 @@ Foundational training in reproducible research includes rigorous instruction in:
 \end{frame}
 
 
-\begin{frame}{git}
+\begin{frame}{Version control and reproducibility}
+
+
+\begin{block}{Why version control?}
+
+\begin{itemize}
+        \item allows you to roll back to previous versions easily
+        \item allows you to try things out without disrupting existing code
+        \item versions can be flagged as ``releases''  
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Version control systems}
+
+\begin{figure}[t]
+    \includegraphics[width=\textwidth]{figures/VCS/VCS001.jpg}  
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Version control systems (git flavored)}
+
+\begin{figure}[t]
+    \includegraphics[width=\textwidth]{figures/VCS/VCS002.jpg}  
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Version control systems}
+
+\begin{figure}[t]
+    \includegraphics[width=\textwidth]{figures/VCS/VCS003.jpg}  
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Version control systems  (git/GitHub flavored)}
+
+\begin{figure}[t]
+    \includegraphics[width=\textwidth]{figures/VCS/VCS004.jpg}  
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}{Lots of (mostly free) options for cloud-based version controlling}
+
+\begin{block}{Most services host multiple types of VCS}
+\begin{itemize}
+\item sourceforge.net
+\item github.com
+\item bitbucket.org
+\item springloops.io
+\item ... [what have you used?]
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}{git is a dialect}
 
 \begin{block}{Key command-line operations}
 \begin{itemize}
 \item {\tt git init}: initializes a repository locally
 \item {\tt git clone}: clones a repository from a remote source (i.e. GitHub.com)
+\item {\tt git branch}: creates a new ``branch'' of code
 \item {\tt git add}, {\tt git rm}: manipulating files 
 \item {\tt git commit}: commits changes you have made
 \end{itemize}
@@ -206,10 +395,59 @@ Foundational training in reproducible research includes rigorous instruction in:
 \end{frame}
 
 
-\begin{frame}{Version control and reproducibility}
+\begin{frame}{Using git with RStudio}
+
+\begin{block}{Demo... }
+\begin{itemize}
+        \item clone a repository from GitHub
+        \item simple commit/push/pull examples
+\end{itemize}
+\end{block}
 
 \end{frame}
 
+
+\begin{frame}{Tools for reproducible data analysis with R}
+
+\begin{block}{Topics}
+\begin{itemize}
+        \item R/RStudio
+       \item Version control: git \& GitHub.com
+         \item \textbf{ggplot2}
+        \item Dynamic documents: knitr, RMarkdown, Sweave
+ \end{itemize}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{Arguments for using {\tt ggplot2}}
+
+\begin{block}{From {\tt ggplot2} users}
+\begin{itemize}
+\item ``literate programming: you describe the plot almost in a natural language. It makes it much easier to reuse code and come back to a graph in a few years time without feeling lost.''
+\item ``flexibility, intuitiveness, and logic of the mapping between the data and its representation. Once one gets his mind wrapped around the grammar of graphics concepts (and particularly the aesthetic mapping), figuring out how to best represent a dataset is much easier than with other graphical representation methods.'' 
+\item ``I think the big strength of ggplot2 is graphic-artist quality default output. And an information-focussed point of view.''
+\item \href{https://github.com/hadley/ggplot2/wiki/Why-use-ggplot2}{Lots more reasons here..}
+\end{itemize}
+\end{block}
+
+Today, we will be using very simple {\tt ggplot2} commands.
+
+\end{frame}
+
+\begin{frame}{Tools for reproducible data analysis with R}
+
+\begin{block}{Topics}
+\begin{itemize}
+        \item R/RStudio
+       \item Version control: git \& GitHub.com
+         \item ggplot2
+        \item \textbf{Dynamic documents: knitr, RMarkdown, Sweave}
+ \end{itemize}
+\end{block}
+
+\end{frame}
 
 
 \begin{frame}{Dyanamic Documents in R}

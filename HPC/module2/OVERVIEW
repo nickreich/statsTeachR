@@ -1,10 +1,9 @@
-Name: [15 char limit]
-Title: [100 char limit]
-Date: yyyy-mm-dd
-Author: First Last <first.last@school.edu>
-Version: v[1.0]
-Description: [description of the module contents/topics. 250 words. (no carriage returns)
-]
-Keywords: [Up to 10 keywords]
-Depends: [optional, any other modules that this depends on] 
-Suggests: [optional, any other modules that would be suggested to have completed before this one]
+Name: HPC Module 2
+Title: Simulation and Parallelization in R
+Date: 2014-02-07
+Author: Nicholas Reich <nick@schoolph.umass.edu>, Andrea Foulkes <foulkes@schoolph.umass.edu>, Gregory Matthews <gregory.matthews@schoolph.umass.edu>, Emily Ramos <eramos@schoolph.umass.edu>
+Version: v1.0
+Description: This module contains information on the principles and practice of reproducible research with R. This module is the first module of the HPC series. This module was presented at a one day short course, Biostatistics in Practice: Research Training in High-Performance Computing with R, given at the Massachusetts Green High Performance Computing Center (MGHPCC) on Februrary 7, 2014. The topics covered in this module include: simulation, random number generation, resampling, generating data from a model, inference using normal approx. and simple linear regression, simulation-based permutation tests, and parallel computing.
+Keywords:  HPC, high performance computing, reproducible, simulation, model, inference, regression, permutation, parallelization, parallel.
+Depends: HPC Module 1 should be completed before HPC Module 2. 
+Suggests: This module is suggested to be used with the HPC Series. This is the second of three modules of the HPC Series.

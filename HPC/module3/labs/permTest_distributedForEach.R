@@ -9,7 +9,7 @@ nCores <- 10
 
 registerDoMC(nCores)
 
-setwd("/Users/nick/Documents/code_versioned/BiP/2013HPCwithR/modules/module2/labs/")
+setwd("/Users/module2/labs/")
 #setwd("/home/ngr67a/BiP/")
 hts <- read.csv("heights.csv")
 

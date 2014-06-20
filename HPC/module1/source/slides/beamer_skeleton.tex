@@ -1,0 +1,136 @@
+%	Use the standard preamble for Beamer slides of all 
+%		statsTeachR modules
+%		(\input, not \include, as \include can't access 
+%		things in higher-level directories since it needs 
+%		write permission there, which it doesn't have; and 
+%		in some settings the preamble may be in a higher-level
+%		directory than the source file.)
+%	This path assumes the preamble is in the parent directory,
+%		modify this if that changes.
+\input{../standard_beamer_preamble}
+
+%	The following variables are assumed by the standard preamble:
+%	Global variable containing module name:
+\title{Principles of Reproducible Research with R}
+%	Global variable containing module shortname:
+%		(Currently unused, may be used in future.)
+\newcommand{\ModuleShortname}{shortName}
+%	Global variable containing author name:
+\author{Andrea Foulkes, Gregory Matthews, Nicholas Reich}
+%	Global variable containing text of license terms:
+\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
+%	Instructor: optional, can leave blank.
+%		Recommended format: {Instructor: Jane Doe}
+\newcommand{\Instructor}{}
+%	Course: optional, can leave blank.
+%		Recommended format: {Course: Biostatistics 101}
+\newcommand{\Course}{Biostatistics in Practice: Research Training in High-Performance Computing with R}
+
+
+
+%	******	Document body begins here	**********************
+
+\begin{document}
+
+%	Title page
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%	******	Everything through the above line must be placed at
+%		the top of any TeX file using the statsTeachR standard
+%		beamer preamble. 
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% TEMPLATES FOR STATSTEACHR FORMATTING BELOW HERE  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \begin{frame}{Overview}
+% 
+% 	\begin{block}{Diagnostic Test}
+% 		Tool for deciding on something you want to know --- the true status of some outcome --- based on something you can measure.
+% 
+% 		\begin{itemize}
+% 
+% 			\item{Deciding whether someone has tuberculosis (the outcome) based on the presence or size of a raised swelling (the test) following tuberculin injection.}
+% 
+% 			\item{Deciding whether an infant has phenylketonuria (the outcome) based on the blood level of phenylalanine (the test).}
+% 
+% 			\item{Deciding whether an infant has phenylketonuria (the outcome) based on the odor of the urine (same outcome of interest, different test).}
+% 		\end{itemize}
+% 
+% 	\end{block}
+% 
+% \end{frame}
+% 
+% 
+% 
+% \begin{frame}{The Gold Standard}
+% 
+% In evaluating a test, must compare results to some ``truth''.
+% 
+% This is provided by the best possible test --- the \emph{gold standard} or \emph{criterion standard} test.
+% 
+% \medskip
+% 
+% 	\begin{block}{Why Not Use the Gold Standard?}
+% 
+% 		 May be expensive, invasive, or impractical.
+% 
+% 		\begin{itemize}
+% 
+% 			\item{Gold-standard test for pancreatic cancer involves biopsy of the pancreas;}
+% 			\item{Gold-standard test for Alzheimer's disease is post-mortem brain autopsy.}
+% 
+% 		\end{itemize}
+% 
+% 	\end{block}
+% 
+% \end{frame}
+% 
+% 
+% 
+% \begin{frame}{Sensitivity and Specificity}
+% 
+% \taburulecolor{MainColorMedium}
+% \tabulinesep=1.5ex
+% \begin{tabu} to 1.0\textwidth[r]{X[,L,]X[,L,]}
+% 	\rowcolor{MainColorLight}\strong{Sensitivity}                                                                    	&
+% 	\strong{Specificity}
+% \\
+% 	How good is this test at \textit{detecting cases} of this condition?
+% 	&
+% 	How good is this test at giving a \textit{clean bill of health} to those \textit{without} the condition?
+% \\\hline
+% 	What proportion, of those with the condition, test positive for the condition?
+% 	&
+% 	What proportion, of those without the condition, test negative for the condition?
+% \\\hline
+% 	\vspace{-3ex}\begin{displaymath}\frac{true\ positives}{positives\ in\ population}\end{displaymath}\vspace{-3ex}
+% 	&
+% 	\vspace{-3ex}\begin{displaymath}\frac{true\ negatives}{negatives\ in\ population}\end{displaymath}\vspace{-3ex}
+% \\\hline
+% 	\begin{math}
+% 		Pr(T^{+} \mid D^{+})
+% 	\end{math}
+% 	\newline
+% 	$T^{+}$ --- positive test;\newline
+% 	$D^{+}$ --- disease
+% 	&
+% 	\begin{math}
+% 		Pr(T^{-} \mid D^{-})
+% 	\end{math}
+% 	\newline
+% 	$T^{-}$ --- negative test;\newline
+% 	$D^{+}$ --- no disease
+% \\
+% \end{tabu}
+% 
+% \end{frame}
+
+
+\end{document}
