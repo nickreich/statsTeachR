@@ -1,30 +1,17 @@
-%	Use the standard preamble for Beamer slides of all 
-%		statsTeachR modules
-%		(\input, not \include, as \include can't access 
-%		things in higher-level directories since it needs 
-%		write permission there, which it doesn't have; and 
-%		in some settings the preamble may be in a higher-level
-%		directory than the source file.)
+
+%% template document for statsTeachR beamer slides 
+
+
 %	This path assumes the preamble is in the parent directory,
 %		modify this if that changes.
-\input{../standard_beamer_preamble}
+\input{../statsTeachR_preamble_slides}
 
 %	The following variables are assumed by the standard preamble:
 %	Global variable containing module name:
-\title{Module Name}
-%	Global variable containing module shortname:
-%		(Currently unused, may be used in future.)
-\newcommand{\ModuleShortname}{shortName}
-%	Global variable containing author name:
-\author{Eric A. Cohen}
+\title{Sample Module name}
+
 %	Global variable containing text of license terms:
 \newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
-%	Instructor: optional, can leave blank.
-%		Recommended format: {Instructor: Jane Doe}
-\newcommand{\Instructor}{}
-%	Course: optional, can leave blank.
-%		Recommended format: {Course: Biostatistics 101}
-\newcommand{\Course}{}
 
 
 
@@ -85,46 +72,6 @@ This is provided by the best possible test --- the \emph{gold standard} or \emph
 		\end{itemize}
 
 	\end{block}
-
-\end{frame}
-
-
-
-\begin{frame}{Sensitivity and Specificity}
-
-\taburulecolor{MainColorMedium}
-\tabulinesep=1.5ex
-\begin{tabu} to 1.0\textwidth[r]{X[,L,]X[,L,]}
-	\rowcolor{MainColorLight}\strong{Sensitivity}                                                                    	&
-	\strong{Specificity}
-\\
-	How good is this test at \textit{detecting cases} of this condition?
-	&
-	How good is this test at giving a \textit{clean bill of health} to those \textit{without} the condition?
-\\\hline
-	What proportion, of those with the condition, test positive for the condition?
-	&
-	What proportion, of those without the condition, test negative for the condition?
-\\\hline
-	\vspace{-3ex}\begin{displaymath}\frac{true\ positives}{positives\ in\ population}\end{displaymath}\vspace{-3ex}
-	&
-	\vspace{-3ex}\begin{displaymath}\frac{true\ negatives}{negatives\ in\ population}\end{displaymath}\vspace{-3ex}
-\\\hline
-	\begin{math}
-		Pr(T^{+} \mid D^{+})
-	\end{math}
-	\newline
-	$T^{+}$ --- positive test;\newline
-	$D^{+}$ --- disease
-	&
-	\begin{math}
-		Pr(T^{-} \mid D^{-})
-	\end{math}
-	\newline
-	$T^{-}$ --- negative test;\newline
-	$D^{+}$ --- no disease
-\\
-\end{tabu}
 
 \end{frame}
 
