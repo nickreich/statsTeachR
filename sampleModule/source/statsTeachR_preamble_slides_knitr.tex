@@ -18,19 +18,26 @@
 \colorlet{MainColorLight}{MainColor!20}
 \usecolortheme[named=MainColor]{structure} 
 
-%	For tables
-%[dvipsnames] [table]
-\usepackage{xcolor}
+%        customize footline to have slide numbers
+\defbeamertemplate*{footline}{my footline}
+{
+    \ifnum \insertpagenumber=1
+      \leavevmode%
+      \vskip0pt%
+    \else
+      \leavevmode%
+      \hbox{%      
+        \begin{beamercolorbox}[wd=.98\paperwidth,ht=.2ex,dp=1ex,right]{}%
+      \insertframenumber/\inserttotalframenumber
+      % \rjust \usebeamerfont{title in head/foot}a \href{http://statsteachr.org}{statsTeachR} resource
+      \end{beamercolorbox}
+      }%
+      \vskip0pt%
+    \fi
+}
 
-%% calling tabu.sty, assuming a particular directory structure
-\usepackage{../tabu}	% Even fancier than tabulary
-\usepackage{multirow}
 
-%	Just for the degree symbol
-\usepackage{textcomp}
 
-%	Get rid of footline (page, author, etc. on each slide)
-\setbeamertemplate{footline}{}
 %	Get rid of navigation buttons
 \setbeamertemplate{navigation symbols}{}
 
@@ -38,23 +45,9 @@
 \usepackage{hanging}
 \setbeamertemplate{footnote}{\raggedright\hangpara{1em}{1}\makebox[1em][l]{\insertfootnotemark}\footnotesize\insertfootnotetext\par}
 
-%	Text style for code snippets inline in text:
-\newcommand{\codeInline}[1]{\texttt{#1}}
-
-%	Text style for emphasis stronger than \emph:
-%		(Note, this doesn't toggle the way \emph does.
-%			(Note, this can be done, didn't seem worth the trouble.))
-\newcommand{\strong}[1]{{\bfseries{#1}}}
-
 
 %        ******	Define title page	**********************
 \setbeamertemplate{title page}{
-	%{\color{MainColor}
-	% There must be a better way than this -vspace at
-	%	 the top and bottom of the page to reduce the 
-	%	 bottom margin, but I can't find one that works.
-	%\vspace{-6em}
-
 % 	% Go to a lot of trouble to get the title in a
 % 	%	nice box, since customizing a beamer block
 % 	%	does not entirely work here (I don't know why)
@@ -63,25 +56,14 @@
 	\addtolength{\titleBoxWidth}{-2.0em}
 	\setlength{\fboxsep}{1.0em}
 	\setlength{\fboxrule}{0pt}
-	%\fcolorbox{MainColor!25}{MainColor!25}{
-	%	\parbox{\titleBoxWidth}{
         {\color{MainColor}
 			\raggedright
 			\LARGE\textbf{\inserttitle}
         } % end color
-	%	}	% end parbox
-	%}	% end fcolorbox
 
 	\vfill
-	%\small{Author: \insertauthor}
-% 	\vspace{\baselineskip}
-% 
-% 	\small{\Course}
-% 
-% 	\small{\Instructor}
-% 	\vspace{\baselineskip}
 
-	{a \href{http://statsteachr.org}{\strong{statsTeachR}} resource}
+	{a \href{http://statsteachr.org}{\bf{statsTeachR}} resource}
 
 	\vspace{\baselineskip}
         
@@ -90,6 +72,5 @@
 
 		\vspace{-15em}
 
-	%}	% end color
 	\clearpage
 }	% end define title page
