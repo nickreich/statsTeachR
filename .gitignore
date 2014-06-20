@@ -7,3 +7,6 @@
 *.snm
 *.synctex.gz
 *concordance.tex
+*.DS_Store
+*.log
+*.nav
