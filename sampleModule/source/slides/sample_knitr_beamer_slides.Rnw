@@ -1,0 +1,121 @@
+%% template document for beamer slides that use knitr 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% VERY IMPORTANT NOTE: %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% every frame that has some knitr in it, must have [fragile] specified, as follows:
+%%        \begin{frame}[fragile]{Multiple linear regression model}
+
+
+
+\documentclass[table]{beamer}
+
+
+\input{../standard_knitr_beamer_preamble}
+
+%        The following variables are assumed by the standard preamble:
+
+\title{Sample Module}
+
+%	Global variable containing text of authorship acknowledgments and license terms:
+\newcommand{\LicenseText}{These slides were adapted for \href{http://statsteachr.org}{statsTeachR} by Nicholas Reich from slides written by Jeff Goldsmith and are released under a \href{http://creativecommons.org/licenses/by-sa/3.0/deed.en_US}{Creative Commons Attribution-ShareAlike 3.0 Unported License}. }
+
+
+\hypersetup{colorlinks,linkcolor=,urlcolor=MainColor}
+
+
+%	******	Document body begins here	**********************
+
+\begin{document}
+
+%	Title page
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%	******	Everything through the above line must be placed at
+%		the top of any TeX file using the statsTeachR standard
+%		beamer preamble. 
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}{Today's lecture}
+
+\begin{itemize}
+        \item Multiple Linear Regression 
+	\begin{itemize}
+		\item Assumptions
+		\item Interpretation
+	\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Motivation}
+
+Most applications involve more that one covariate -- if more than one thing can influence an outcome, you need multiple linear regression.
+\begin{itemize}
+        \item Improved description of $y | x$
+        \item More accurate estimates and predictions
+        \item Allow testing of multiple effects
+	\item Includes multiple predictor types
+\end{itemize}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Multiple linear regression model}
+
+\begin{itemize}
+        \item Observe data $(y_i, x_{i1}, \ldots, x_{ip})$ for subjects $1, \ldots, n$. Want to estimate $\beta_0, \beta_1, \ldots, \beta_p$ in the model
+	$$ y_i = \beta_0 + \beta_1x_{i1} + \ldots + \beta_1x_{ip} + \epsilon_i; \mbox{ } \epsilon_i \stackrel{iid}{\sim} (0,\sigma^2)$$
+	\item Assumptions (residuals have mean zero, constant variance, are independent) are as in SLR
+	\item Impose linearity which (as in the SLR) is a big assumption
+	\item Our primary interest will be $E(y | x)$
+	\item Eventually estimate model parameters using least squares
+\end{itemize}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Multiple linear regression model}
+
+
+<<mlr, tidy=FALSE, message=FALSE>>=
+require(MASS)
+data(crabs)
+mlr <- lm(FL ~ factor(sex) + RW, data=crabs)
+summary(mlr)$coef
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Multiple linear regression model}
+
+
+<<samplePlot, tidy=FALSE, fig.height=4>>=
+qplot(RW, FL, facets=.~sp, color=sex, data=crabs)
+@
+
+\end{frame}
+
+
+\end{document}
+
