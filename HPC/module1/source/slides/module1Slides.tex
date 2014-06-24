@@ -2,7 +2,56 @@
 
 %% preamble document for statsTeachR beamer slides  
 
-\documentclass[table]{beamer}
+\documentclass[table]{beamer}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
 
 %  Set theme (a nice plain one)
 \usetheme{Malmoe}
@@ -83,7 +132,7 @@
 
 
 %	******	Document body begins here	**********************
-
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
 %	Title page
@@ -248,13 +297,13 @@ Teaching Assistants:
 
 \begin{frame}{Principles of Reproducible Research -- A Brief History}
 \begin{itemize}
-\item \scriptsize Roots of reproducible research can be traced to the concept of “literate programming” heralded by Donald Knuth \\
+\item \scriptsize Roots of reproducible research can be traced to the concept of literate programming heralded by Donald Knuth \\
 {\tiny -- Knuth, D. E. (1992). Literate Programming (1st ed.). Center for the Study of Language and Information.}
 \item \scriptsize Concept  operationalized in 2002 by Friederic Leisch with introduction of Sweave, a program that allows the user to weave together R code and natural language descriptions \\
-{\tiny -- Leisch, F. (2002a). Sweave. Dynamic generation of statistical reports using literate data analysis. SFB Adaptive Information Systems and Modelling in Economics and Management Science, WU Vienna University of Economics and Business; Leisch, F. (2002b). Sweave, part I: Mixing R and LaTeX. R News, 2/3, 28–31.
+{\tiny -- Leisch, F. (2002a). Sweave. Dynamic generation of statistical reports using literate data analysis. SFB Adaptive Information Systems and Modelling in Economics and Management Science, WU Vienna University of Economics and Business; Leisch, F. (2002b). Sweave, part I: Mixing R and LaTeX. R News, 2/3, 2831.
 }
 \item \scriptsize Importance of reproducibility discussed in vast array of fields, from econometrics, epidemiology and biostatistics, bioinformatics, and engineering \\
-{\tiny -- Koenker, R. (1996). Reproducible econometric research. Retrieved September 17, 2012, from: \url{http://www.econ.uiuc.edu/~roger/research/repro/repro.html}; Peng, R. D. (2009). Reproducible research and Biostatistics. Biostatistics, 10(3), 405–408. doi:10.1093/biostatistics/kxp014; Gentleman, R. (2005). Reproducible research: a bioinformatics case study. Statistical applications in genetics and molecular biology, 4, Article2. doi:10.2202/1544-6115.1034; Vandewalle, P., Barrenetxea, G., Jovanovic, I., Ridolfi, A., \& Vetterli, M. (2007). Experiences with Reproducible Research in Various Facets of Signal Processing Research. IEEE International Conference on Acoustics, Speech and Signal Processing. Proceedings, 4, IV–1256. doi:10.1109/ICASSP.2007.367304)}
+{\tiny -- Koenker, R. (1996). Reproducible econometric research. Retrieved September 17, 2012, from: \url{http://www.econ.uiuc.edu/~roger/research/repro/repro.html}; Peng, R. D. (2009). Reproducible research and Biostatistics. Biostatistics, 10(3), 405408. doi:10.1093/biostatistics/kxp014; Gentleman, R. (2005). Reproducible research: a bioinformatics case study. Statistical applications in genetics and molecular biology, 4, Article2. doi:10.2202/1544-6115.1034; Vandewalle, P., Barrenetxea, G., Jovanovic, I., Ridolfi, A., \& Vetterli, M. (2007). Experiences with Reproducible Research in Various Facets of Signal Processing Research. IEEE International Conference on Acoustics, Speech and Signal Processing. Proceedings, 4, IV1256. doi:10.1109/ICASSP.2007.367304)}
 \end{itemize} 
 \end{frame}
 
