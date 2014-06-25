@@ -2,25 +2,15 @@
 \documentclass[table]{beamer}
 
 
-\input{../standard_knitr_beamer_preamble}
+\input{../statsTeachR_preamble_slides}
 
 
-%	The following variables are assumed by the standard preamble:
-%	Global variable containing module name:
+%  The following variables are assumed by the standard preamble:
+%  Global variable containing module name:
 \title{Principles and Practice of Reproducible Research with R}
-%	Global variable containing module shortname:
-%		(Currently unused, may be used in future.)
-\newcommand{\ModuleShortname}{shortName}
-%	Global variable containing author name:
-\author{Andrea Foulkes, Gregory Matthews, Nicholas Reich}
-%	Global variable containing text of license terms:
-\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US }
-%	Instructor: optional, can leave blank.
-%		Recommended format: {Instructor: Jane Doe}
-\newcommand{\Instructor}{}
-%	Course: optional, can leave blank.
-%		Recommended format: {Course: Biostatistics 101}
-\newcommand{\Course}{Biostatistics in Practice: Research Training in High-Performance Computing with R}
+
+%        Global variable containing text of authorship acknowledgments and license terms:
+\newcommand{\LicenseText}{These slides were adapted for \href{http://statsteachr.org}{statsTeachR} by Emily Ramos from slides written by Andrea Foulkes, Gregory Matthews, Nicholas Reich and are released under a \href{http://creativecommons.org/licenses/by-sa/3.0/deed.en_US}{Creative Commons Attribution-ShareAlike 3.0 Unported License}. }
 
 
 
@@ -35,6 +25,10 @@
 %		the top of any TeX file using the statsTeachR standard
 %		beamer preamble. 
 
+%        Title page
+\begin{frame}[plain]
+        \titlepage
+\end{frame}
 
 \begin{frame}{}
 \huge {\sc Biostatistics in Practice (BiP) 2014}: \\
@@ -48,15 +42,12 @@ Data Sciences for the Life Sciences in a High Performance Computing Environment
 \end{frame}
 
 
-%        Title page
-\begin{frame}[plain]
-        \titlepage
-\end{frame}
-
-
-
 \begin{frame}{Agenda}
 
+\bigskip
+\textbf{Agenda}
+\bigskip
+\\
 \scriptsize{
 \begin{enumerate}
 \item[] \underline{\sc Module 1}: \hfill 9:00AM --10:15AM

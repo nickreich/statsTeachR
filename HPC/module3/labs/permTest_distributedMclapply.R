@@ -2,6 +2,8 @@
 ## BiP HPC workshop 2014
 ## Nicholas Reich
 
+## Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\textunderscore US 
+
 require(doMC)
 require(foreach)
 require(parallel)

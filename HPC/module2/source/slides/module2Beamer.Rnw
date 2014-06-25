@@ -6,24 +6,14 @@
 \documentclass[table]{beamer}
 
 
-\input{../standard_knitr_beamer_preamble}
+\input{../statsTeachR_preamble_slides}
 
-%        The following variables are assumed by the standard preamble:
+%  The following variables are assumed by the standard preamble:
 %	Global variable containing module name:
 \title{Simulation and Parallelization in R}
-%	Global variable containing module shortname:
-%		(Currently unused, may be used in future.)
-\newcommand{\ModuleShortname}{simPar}
-%	Global variable containing author name:
-\author{Nicholas G Reich, Andrea S Foulkes, Gregory J Matthews}
-%	Global variable containing text of license terms:
-\newcommand{\LicenseText}{Made available under the Creative Commons Attribution-ShareAlike 3.0 Unported License: http://creativecommons.org/licenses/by-sa/3.0/deed.en\_US }
-%	Instructor: optional, can leave blank.
-%		Recommended format: {Instructor: Jane Doe}
-\newcommand{\Instructor}{7 February 2014}
-%	Course: optional, can leave blank.
-%		Recommended format: {Course: Biostatistics 101}
-\newcommand{\Course}{Biostatistics in Practice: High-Performance Computing with R}
+
+%        Global variable containing text of authorship acknowledgments and license terms:
+\newcommand{\LicenseText}{These slides were adapted for \href{http://statsteachr.org}{statsTeachR} by Emily Ramos from slides written by Nicholas G Reich, Andrea S Foulkes, Gregory J Matthews and are released under a \href{http://creativecommons.org/licenses/by-sa/3.0/deed.en_US}{Creative Commons Attribution-ShareAlike 3.0 Unported License}. }
 
 %%%%%%%% IMPORTANT -- MUST HAVE [fragile] for some/all frames chunks to have output work correctly. 
 
