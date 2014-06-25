@@ -1,0 +1,76 @@
+%       ************************************************
+%       **        LaTeX preamble to be used with all 
+%	**        statsTeachR labs/handouts.
+%
+%	Author: Nicholas G Reich
+%	Last modified: 14 January 2014
+%	************************************************
+
+% \documentclass[table]{beamer}
+
+%	Set theme (a nice plain one)
+\usetheme{Malmoe}
+
+%	Use named colors, set main color of theme
+%		to match Web site color:
+\definecolor{MainColor}{RGB}{10, 74, 109}
+\colorlet{MainColorMedium}{MainColor!50}
+\colorlet{MainColorLight}{MainColor!20}
+\usecolortheme[named=MainColor]{structure} 
+
+%        customize footline to have slide numbers
+\defbeamertemplate*{footline}{my footline}
+{
+    \ifnum \insertpagenumber=1
+      \leavevmode%
+      \vskip0pt%
+    \else
+      \leavevmode%
+      \hbox{%      
+        \begin{beamercolorbox}[wd=.98\paperwidth,ht=.2ex,dp=1ex,right]{}%
+      \insertframenumber/\inserttotalframenumber
+      % \rjust \usebeamerfont{title in head/foot}a \href{http://statsteachr.org}{statsTeachR} resource
+      \end{beamercolorbox}
+      }%
+      \vskip0pt%
+    \fi
+}
+
+
+
+%	Get rid of navigation buttons
+\setbeamertemplate{navigation symbols}{}
+
+%	Make footnotes not ugly
+\usepackage{hanging}
+\setbeamertemplate{footnote}{\raggedright\hangpara{1em}{1}\makebox[1em][l]{\insertfootnotemark}\footnotesize\insertfootnotetext\par}
+
+
+%        ******	Define title page	**********************
+\setbeamertemplate{title page}{
+% 	% Go to a lot of trouble to get the title in a
+% 	%	nice box, since customizing a beamer block
+% 	%	does not entirely work here (I don't know why)
+	\newlength{\titleBoxWidth}
+	\setlength{\titleBoxWidth}{\textwidth}
+	\addtolength{\titleBoxWidth}{-2.0em}
+	\setlength{\fboxsep}{1.0em}
+	\setlength{\fboxrule}{0pt}
+        {\color{MainColor}
+			\raggedright
+			\LARGE\textbf{\inserttitle}
+        } % end color
+
+	\vfill
+
+	{a \href{http://statsteachr.org}{\bf{statsTeachR}} resource}
+
+	\vspace{\baselineskip}
+        
+        \scriptsize{\LicenseText}
+
+
+		\vspace{-15em}
+
+	\clearpage
+}	% end define title page

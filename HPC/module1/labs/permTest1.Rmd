@@ -2,6 +2,8 @@ An example R Markdown file with Mother/Daughter heights data
 ========================================================
 ### Biostatistics in Practice HPC workshop, February 2014
 
+### This lab was adapted for $\href{http://statsteachr.org}{statsTeachR}$ by Emily Ramos from a lab written by Andrea Foulkes, Nicholas Reich, Gregory Matthews and are released under a $\href{http://creativecommons.org/licenses/by-sa/3.0/deed.en_US}{Creative Commons Attribution-ShareAlike 3.0 Unported License}$.
+
 ```{r loadData, message=FALSE}
 require(alr3)
 data(heights)

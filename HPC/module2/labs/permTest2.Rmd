@@ -2,6 +2,8 @@ A permutation test for the Mother/Daughter heights data
 ========================================================
 ### Biostatistics in Practice HPC workshop, February 2014
 
+### This lab was adapted for $\href{http://statsteachr.org}{statsTeachR}$ by Emily Ramos from a lab written by Nicholas G Reich and are released under a $\href{http://creativecommons.org/licenses/by-sa/3.0/deed.en_US}{Creative Commons Attribution-ShareAlike 3.0 Unported License}$.
+
 This file documents an analysis to evaluate the significance of the association between mother and daughter heights. We will analyze the "heights" dataset from the `R` package `alr3`. 
 
 ```{r loadData, message=FALSE}
