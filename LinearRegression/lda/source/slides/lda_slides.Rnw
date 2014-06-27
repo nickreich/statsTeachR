@@ -53,11 +53,18 @@ require(ggplot2)
 theme_set(theme_bw())
 @
 
-\begin{frame}{Today's topic}
+\begin{frame}{Today's Lecture}
 
-
-A rapid overview of Longitudinal Data Analysis
-
+An Introduction to Longitudinal data analysis
+\bi
+        \myitem basic concepts and comparison with cross-sectional analyses
+        \myitem several central models, including
+        \bi 
+                \myitem marginal models
+                \myitem random/mixed effects models
+        \ei 
+        
+\ei
 
 \end{frame}
 
