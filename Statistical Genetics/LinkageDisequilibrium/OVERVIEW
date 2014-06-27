@@ -1,0 +1,5 @@
+Name: LinkageDisequilibrium
+Title: Introduction to Linkage Disequilibrium: 2014-06-27
+Author: Eric R. Reed <erreed@schoolph.umass.edu>
+Version: v0.6
+Description: This module was written to introduce concepts of Linkage Disequilibrium. This module provides materials for two classes on statistical genetics targeted for people with knowledge of basic genetics conepts, as well as basic R programming experience. Topics covered include: overview of LD, calculations of r^2 with haplotype and genotype data, and the creation of LD maps. There are two labs included.  The first demonstrate how to calculate r^2 and build LD maps from haplotype data.  The second demonstrates how to calculate r^2 and build LD maps from genotype data.
