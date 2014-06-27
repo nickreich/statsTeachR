@@ -1,0 +1,161 @@
+%% template document for beamer slides that use knitr 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% VERY IMPORTANT NOTE: %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% every frame that has some knitr in it, must have [fragile] specified, as follows:
+%%        \begin{frame}[fragile]{Multiple linear regression model}
+
+
+
+\documentclass[table]{beamer}
+
+
+\input{../statsTeachR_preamble_slides_knitr}
+
+%        The following variables are assumed by the standard preamble:
+
+\title{Linkage Disequilibrium}
+
+%	Global variable containing text of authorship acknowledgments and license terms:
+\newcommand{\LicenseText}{These slides were written for \href{http://statsteachr.org}{statsTeachR} by Eric Reed.}
+
+
+\hypersetup{colorlinks,linkcolor=,urlcolor=MainColor}
+
+
+%	******	Document body begins here	**********************
+\usepackage{multirow}
+\usepackage{graphicx}
+\begin{document}
+
+%	Title page
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%	******	Everything through the above line must be placed at
+%		the top of any TeX file using the statsTeachR standard
+%		beamer preamble. 
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[fragile]{Introduction}
+
+Linkage Disequilibrium refers a number of measures of association between \textbf{alleles}\footnote{The identity of a genetic information at a specific location on the chromosome} at different \textbf{sites}\footnote{A specific location on the chromosome} along the same \textbf{chromosome}\footnote{A structure of DNA and protein that contains genetic information}.
+
+\begin{itemize}
+\item It occurs as a result of genetic \textbf{recombination} across the chromosome.
+\begin{itemize} 
+
+\item Recombination is crossover between two \textbf{homologous}\footnote{Refers to either of the maternal or paternally inherited chromosomes that contain genetic information for the same set of sites} chromosomes during meiosis (\textit{see next slide}).
+\item Sites that are further apart, and have higher recombination rates between them have lower LD values.
+\end{itemize}
+\item Linkage disequilibrium is not relevant between sites on different chromosomes, which segregate independently.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Recombination}
+
+\begin{figure}[h!]
+  \centering
+    \includegraphics[width=.5\textwidth]{recom.pdf}
+\end{figure}
+\begin{block}{Ploidy: The number of sets of homologous chromosomes in a particular cell}
+\begin{itemize}
+\item Haploid: Consisting of one set of homologous chromosomes
+\item Diploid: Consisting of two sets of homologous chromosomes.
+\item Triploid: Seedless watermelon and bananas!
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]{Haplotype Frequencies Under Independence}
+
+
+
+Under independence the distribution of \textbf{haplotypes}\footnote{The sequence of alleles located across a single chromosome}. counts at two sites are as follows:
+
+\begin{table}
+\centering
+\begin{tabular}{ c r| c c | c }
+\multicolumn{5}{ c }{Site 2} \\
+
+   & & B & b &\\
+    \hline
+    \multirow{2}{*}{Site 1} & A  &$P_AP_B$ & $P_AP_b$ &  $P_A$\\
+  
+ & a & $P_aP_B$ & $P_aP_b$.&  $P_a$\\
+  \hline
+    & & $P_B$ & $P_b$ & $1$\\
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+\begin{frame}[fragile]{Haplotype Counts Under Independence}
+
+Since each individual $n$ in a population, has two sets of homologous chromosomes, the total counts of haplotypes are equal to $2n$.
+
+\begin{table}
+\centering
+\begin{tabular}{c r| c c | c }
+\multicolumn{5}{ c }{Site 2} \\
+    & & B & b &\\
+    \hline
+  \multirow{2}{*}{Site 1} & A & $NP_AP_B$ & $NP_AP_b$ &  $NP_A$\\
+  & a & $NP_aP_B$ & $NP_aP_b$.&  $NP_a$\\
+  \hline
+  &  & $NP_B$ & $NP_b$ & $N=2n$\\
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Haplotype Frequencies Under Linkage Disequilibrium}
+Under linkage disequilibrium observed haplotype counts depart from expected haplotype counts under independence by frequency $D$.
+\begin{table}
+\centering
+\begin{tabular}{c r| c c | c }
+\multicolumn{5}{ c }{Site 2} \\
+    & & B & b &\\
+    \hline
+  \multirow{2}{*}{Site 1} & A & $N(P_AP_B+D)$ & $N(P_AP_b-D)$ &  $NP_A$\\
+  & a & $N(P_aP_B-D)$ & $N(P_aP_b+D)$.&  $NP_a$\\
+  \hline
+  &  & $NP_B$ & $NP_b$ & $N=2n$\\
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}[fragile]{Measuring LD with $r^2$}
+$r^2$ is a commonly used measure of LD.  It is the square of the correlation between two sites, and can be calculated via Pearson's $\chi^2$-statistic, with the form: $$r^2=\chi^2_1/N,$$ where $$\chi^2_1=\sum_{i,j}\frac{(O_{ij}-E_{ij})}{E_{ij}}.$$
+$i$ and$j$ refer to the rows and columns respectively on the contingency tables for the observed haplotype counts $O$, and the haplotype counts expected under independence $E$.
+
+\begin{itemize}
+\item In cases where haplotype information on study participants is available this is straight-forward to calculate.
+\item More often \textbf{genotype}\footnote{Genetic information pertaining to the combination of alleles on both   homologous chromosomes at a specific site} data is only available for study participants, in which case additional haplotype estimation steps  are required.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Now You Try!}
+
+In the accompanied labs we will calculate $r^2$ values directly using haplotype data, as well as employ the ``genetics" package in \textit{R} to estimate $r^2$ values from genotype data. 
+\end{frame}
+
+
+
+\end{document}
+

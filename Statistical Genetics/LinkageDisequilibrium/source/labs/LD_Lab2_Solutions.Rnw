@@ -1,0 +1,153 @@
+\documentclass{article}
+
+\input{../statsTeachR_preamble_labs}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+hook_source = knit_hooks$get('source') # the following correct tilde display
+knit_hooks$set(source = function(x, options) {
+  txt = hook_source(x, options)
+  gsub('~', '\\\\mytilde', txt)
+})
+@
+
+\license{This is a product of \href{http://statsteachr.org}{statsTeachR} that is released under a \href{http://creativecommons.org/licenses/by-sa/3.0}{Creative Commons Attribution-ShareAlike 3.0 Unported}. This lab was written by Eric Reed}
+
+
+\section*{Linkage Disequilibrium: Lab 2 SOlutions}
+
+
+\subsection*{Introduction}
+
+
+\subsection*{Linkage Disequilibrium with Genotype Data}
+
+
+<<genetics, warning=FALSE>>=
+
+library(genetics)
+@
+
+
+<<geno, warning=FALSE>>=
+load("genotypes_chr1.RData")
+@
+
+\begin{exercise}
+
+Compare the following $r^2$ values:
+
+\begin{enumerate}
+
+
+
+  %\begin{itemize}
+    \item sites from columns 75 and 76 to the $r^2$ values we found in lab 1 for these site combinations.
+    <<ex1.1, warning=FALSE>>=
+genosite75<-as.genotype.allele.count(geno1[,75])
+genosite76<-as.genotype.allele.count(geno1[,76])
+LD(genosite75,genosite76)$"R^2"
+
+@
+    
+    \item sites from columns 75 and 77
+    <<ex1.2, warning=FALSE>>=
+genosite77<-as.genotype.allele.count(geno1[,77])
+LD(genosite75,genosite77)$"R^2"
+@
+    \item sites from columns 75 and 80
+ <<ex1.3, warning=FALSE>>=
+genosite80<-as.genotype.allele.count(geno1[,80])
+LD(genosite75,genosite80)$"R^2"
+@
+ %\end{itemize}
+
+\end{enumerate}
+In each case the $r^2$ values are close by not exactly the values found in Lab 1 for these site combinations. Contrary to Lab 1 LD between sites 75 and 77 is greater than 77 and 80.
+
+\end{exercise}
+
+
+<<LDmapfunc, warning=FALSE>>=
+convertgenos<-function(start,end){
+as.genos<-function(x){
+    as.genotype.allele.count(geno1[,x])}
+  siteS<-as.matrix(c(start:end))
+  sitekeep<-which(!colSums(geno1[,start:end], na.rm=TRUE)==0)
+  siteS<-as.matrix(siteS[sitekeep,])
+  genos<-(apply(siteS,1, as.genos))
+colnames(genos)<-colnames(geno1)[which(!colSums(geno1[,start:end], na.rm=TRUE)==0)]
+genos<-makeGenotypes(genos)}
+
+@
+
+
+\begin{exercise}
+
+We can now use the \texttt{LDheatmap()} function to create heat maps of $r^2$ values. The use of this function is demonstrated below: 
+<<LDheatmap, warning=FALSE>>=
+require(LDheatmap)
+#LDheatmap(genos, LDmeasure="r", SNP.name=colnames(genos))
+@
+
+
+
+\begin{enumerate}
+
+\item Create a new genotype object of the first 50 sites from the \texttt{geno1} object and create a heatmap from this object. \textit{Both steps may take a little while.}
+<<ex2.1, warning=FALSE>>=
+genos50<-convertgenos(1,50)
+LDheatmap(genos50, LDmeasure="r", SNP.name=colnames(genos50))
+@
+\item What pairs of sites appear to have the greatest LD?
+
+There appears to be high LD between 3 pairs of sites: rs12563338 and rs4018608; rs10910030 and rs3107145; rs707467 and rs3753503 .
+
+\item Are there groups of sites that you notice to have higher LD than others? Between which sites does these occur?
+There appears to be four clusters of noticeable LD. The first is between sites: rs10907175 and rs12142199.  The second is between sites: rs884080 and rs451061.  The third is between sites: rs13376356 and rs6684855.  The last is between sites: rs3753503 and rs707467(the final site).
+\item What pair of sites have the greatest LD?
+<<ex2.4, warning=FALSE>>=
+genomat50<-LD(genos50)$"R^2"
+maxld<-which(genomat50 == max(genomat50, na.rm=TRUE), arr.ind=TRUE)
+rownames(genomat50)[maxld[1]]
+colnames(genomat50)[maxld[2]]
+@
+\item What is the average LD of the  first 50 sites?
+<<ex2.5, warning=FALSE>>=
+mean(genomat50, na.rm=TRUE)
+@
+
+
+<<movingavg, warning=FALSE>>=
+avgld<-function(genos, start, end, length){
+lo<-start:(end-length+1)
+hi<-length:end
+vec<-rbind(lo, hi)
+avgld<-function(vec){
+  start<-vec[1]
+  end<-vec[2]
+  genomat<-genos[start:end]
+  mat<-LD(genomat)$"R^2"
+avg<-mean(mat, na.rm=TRUE)
+cbind(avg,start,end)}
+avgLD<-t(apply(vec,2,avgld))
+colnames(avgLD)<-c("AvgLD", "Start", "Stop")
+avgLD}
+@
+\item Plot the moving average of the first 50 sites, with a window length of 10?  Is it consistent with your results from \textit{question 2}?
+<<ex2.6, warning=FALSE>>=
+require(ggplot2)
+movavg50<-avgld(genos50, 1, 50, 10)
+movavg50<-as.data.frame(movavg50)
+qplot(Start, AvgLD, data=movavg50)
+@
+In the plot there appears to be four distinct peaks around a starting points of 2, 20, 30, and 41, which is consistent with question 2.
+
+
+
+\end{enumerate}
+\end{exercise}
+
+
+\end{document}

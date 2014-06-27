@@ -1,0 +1,131 @@
+\documentclass{article}
+
+\input{../statsTeachR_preamble_labs}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+hook_source = knit_hooks$get('source') # the following correct tilde display
+knit_hooks$set(source = function(x, options) {
+  txt = hook_source(x, options)
+  gsub('~', '\\\\mytilde', txt)
+})
+@
+
+\license{This is a product of \href{http://statsteachr.org}{statsTeachR} that is released under a \href{http://creativecommons.org/licenses/by-sa/3.0}{Creative Commons Attribution-ShareAlike 3.0 Unported}. This lab was written by Eric Reed.}
+
+
+\section*{Linkage Disequilibrium: Lab 1 Solutions}
+
+\begin{exercise}
+
+
+\begin{enumerate}
+  \item Pull out the site combination from sites 75 \& 76 from the \texttt{hap1} object.
+  
+    \begin{itemize}
+    \item Demonstrate the expected and observed haplotype distributions for these two sites?
+    <<ex1.1, warning=FALSE>>=
+load("haplotypes_chr1.RData")
+hapsite75<-hap1[,75]
+hapsite76<-hap1[,76]
+chisq.test(hapsite75,hapsite76)$expected
+chisq.test(hapsite75,hapsite76)$observed
+
+@
+    
+    \item What is the value of $\chi^2_1$ and $r^2$?
+    <<ex1.2, warning=FALSE>>=
+X2<-chisq.test(hapsite75,hapsite76, correct=FALSE)$statistic
+X2
+N<-sum(chisq.test(hapsite75,hapsite76)$observed)
+N
+r2<-X2/N
+r2
+@
+    \item What can you say about the LD of these two sites?
+    
+These two sites have VERY HIGH LD.  In fact from this sample they seem perfectly correlated.
+    
+    \end{itemize}
+    
+  \item Find the $r^2$ values of on site combination from columns 75 \& 77, and 75 \& 80 of the \texttt{hap1} object.  What do you notice about the LD relationship between these two combinations (recall that they are in order by position)?
+  <<ex1.4, warning=FALSE>>=
+hapsite77<-hap1[,77]
+hapsite80<-hap1[,80]
+r2sites75and77<-chisq.test(hapsite75,hapsite77,
+              correct=FALSE)$statistic/sum(chisq.test(hapsite75,hapsite77)$observed)
+r2sites75and77
+r2sites75and80<-chisq.test(hapsite75,hapsite80, 
+              correct=FALSE)$statistic/sum(chisq.test(hapsite75,hapsite80)$observed)
+r2sites75and80
+@
+The $r^2$ value of site 77 is smaller than that for site 80, even though site 80 is further apart.
+  \end{enumerate}
+  \end{exercise}
+
+
+<<LDmap, warning=FALSE>>=
+ld.Rsq<-function(hapmat){
+  numvec<-as.matrix(c(1:ncol(hapmat)))
+ld<-function(hapcol,hapmat){
+  x1<-hapmat[,hapcol]
+  rsq<-function(z){
+    N<-sum(chisq.test(x1,z)$observed)
+  chisq.test(x1,z,correct=FALSE)$statistic/N}
+  apply(hapmat,2,rsq)}
+map<-apply(numvec, 1, ld, hapmat)
+colnames(map)<-rownames(map)
+bot<-upper.tri(map,diag=TRUE)
+map[bot]<-NA
+signif(map,4)
+}
+
+@
+
+
+\begin{exercise}
+
+\begin{enumerate}
+\item Run \texttt{ld.Rsq()} on sites from columns 75-80 from the \texttt{hap1} object and compare the map with your values from Exercise 1.
+<<ex2.1, warning=FALSE>>=
+hapsites75to80<-hap1[,75:80]
+LDhapsites75to80<-ld.Rsq(hapsites75to80)
+LDhapsites75to80
+@
+
+
+<<heatmaphaps, warning=FALSE>>=
+
+require(reshape)
+require(ggplot2)
+
+heatmapHaps<-function(hapmap){
+meltedr2<-melt(hapmap)
+
+meltedr2$X1 <- factor(meltedr2$X1, as.character(meltedr2$X1))
+meltedr2$X2 <- factor(meltedr2$X2, as.character(meltedr2$X2))
+
+p <- ggplot(meltedr2, aes(X1, X2)) + geom_tile(aes(fill = value),
+        colour = "white") + scale_fill_gradient(low = "white",
+            high = "steelblue", name="r^2") + xlab(NULL) + ylab(NULL) +ggtitle("LD Measured by r^2")
+p}
+@
+
+\item Built a new LD map of the first ten SNPs, and then input it into \texttt{heatmapHaps()}.  What site appears to have the highest average LD with the other sites in the LD map?
+<<ex2.2, warning=FALSE>>=
+hapsites1to10<-hap1[,1:10]
+LDhapsites1to10<-ld.Rsq(hapsites1to10)
+heatmapHaps(LDhapsites1to10)
+save.image("LD_Lab1_Workspace.RData")
+@
+
+
+\end{enumerate}
+
+\end{exercise}
+
+
+
+
+\end{document}

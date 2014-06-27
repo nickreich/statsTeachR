@@ -1,0 +1,158 @@
+\documentclass{article}
+
+\input{../statsTeachR_preamble_labs}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+hook_source = knit_hooks$get('source') # the following correct tilde display
+knit_hooks$set(source = function(x, options) {
+  txt = hook_source(x, options)
+  gsub('~', '\\\\mytilde', txt)
+})
+@
+
+\license{This is a product of \href{http://statsteachr.org}{statsTeachR} that is released under a \href{http://creativecommons.org/licenses/by-sa/3.0}{Creative Commons Attribution-ShareAlike 3.0 Unported}. This lab was written by Eric Reed}
+
+
+\section*{Linkage Disequilibrium: Lab 2}
+
+
+\subsection*{Introduction}
+
+In the previous lab, we performed linkage disequilibrium calculations of $r^2$ on haplotype data. In a perfect world we would always have haploptype data for each study participant.  Unfortunately, it is much easier and common to obtain genotype data.  A problem emerges in that if we consider two sites on the same chromosome, and denote the major and minor alleles at the first chromosome as $A$ and $a$, and likewise as $B$ and $b$ at the second site. If an individual has the genotype $AaBb$, we cannot distinguish between haplotype combinations ($Ab,aB$) or ($AB,ab$).  Therefore, in order to calculate LD using genotype data, an extra step is need to estimate haplotypes given genotype data.
+
+\subsection*{Linkage Disequilibrium with Genotype Data}
+
+In this lab we will use the \texttt{genetics} package in order to perform haplotype estimation and estimate $r^2$.
+
+<<genetics, eval=FALSE>>=
+install.packages("genetics")
+require(genetics)
+@
+
+Next, let's load some genotype data. \texttt{geno1} contains genotype data for $2096$ individuals for the same $3586$ sites as the \texttt{hap1} object.  The data is in numeric format, where the value pertains to the number of minor alleles present in each genotype.  We will need to convert this  to the \texttt{genotype} format, using the \texttt{as.genotype.allele.count()} function. Let's first find the $r^2$ value for the sites from columns 999 \& 1000.
+<<geno, eval=FALSE>>=
+load("genotypes_chr1.RData")
+genosite1<-as.genotype.allele.count(geno1[,999])
+genosite2<-as.genotype.allele.count(geno1[,1000])
+@
+It's simple to find $X^2$ and $N$ using the \texttt{LD} function. Since the $n$ output from \texttt{LD()} pertains to population size, we will double to find the number of homologous chromosomes.
+
+<<LDcalc, eval=FALSE>>=
+LD(genosite1,genosite2)
+X2geno<-LD(genosite1,genosite2)$"X^2"
+twoN<-2*LD(genosite1,genosite2)$n
+r2geno<-X2geno/twoN
+r2geno
+@
+\texttt{LD()} will can also find $r^2$ directly.
+<<r2direct, eval=FALSE>>=
+LD(genosite1,genosite2)$"R^2"
+@
+Notice, that the $r^2$ value for the genotype data is much smaller than that for the haplotype data.  One reason is we can't expect the same LD values between two different populations. Another reason, is the nature of the way the haplotypes are estimated for the genotype data, which adds uncertainty to our estimates.
+
+\begin{exercise}
+
+Compare the following $r^2$ values to the $r^2$ values we found in lab 1 for these site combinations:
+
+\begin{enumerate}
+
+
+
+  %\begin{itemize}
+    \item sites from columns 75 and 76
+    \item sites from columns 75 and 77
+    \item sites from columns 75 and 80
+    %\end{itemize}
+
+
+\end{enumerate}
+\end{exercise}
+
+\subsubsection*{LD Maps}
+
+In order to create LD maps, similar to the one's we found in Lab 1, we first need to convert the numeric data for each site using the \texttt{as.genotype.allele.count()} function. We can do this column by column, or use another \texttt{apply} function, and then format the data once more using the \texttt{makeGenotype()} function.  This is demonstrated below for sites from columns 1-5.
+
+<<LDmapfunc, eval=FALSE>>=
+convertgenos<-function(start,end){
+as.genos<-function(x){
+    as.genotype.allele.count(geno1[,x])}
+  siteS<-as.matrix(c(start:end))
+  sitekeep<-which(!colSums(geno1[,start:end], na.rm=TRUE)==0)
+  siteS<-as.matrix(siteS[sitekeep,])
+  genos<-(apply(siteS,1, as.genos))
+colnames(genos)<-colnames(geno1)[which(!colSums(geno1[,start:end], na.rm=TRUE)==0)]
+genos<-makeGenotypes(genos)}
+
+genos<-convertgenos(1,5)
+@
+
+
+\begin{exercise}
+
+We can now use the \texttt{LDheatmap()} function to create heat maps of $r^2$ values. The use of this function is demonstrated below: 
+<<LDheatmap, eval=FALSE>>=
+install.packages("LDheatmap")
+require(LDheatmap)
+LDheatmap(genos, LDmeasure="r", SNP.name=colnames(genos))
+@
+\begin{enumerate}
+
+\item Create a new genotype object of the first 50 sites from the \texttt{geno1} object and create a heat map from this object. \textit{Both steps may take a little while.}
+
+\item What pairs of sites appear to have the greatest LD?
+
+\item Are there groups of sites that you notice to have higher LD than others? Between which sites does these occur?
+
+You can also use the \texttt{LD()} function to create LD maps of $r^2$ values.
+<<LD, eval=FALSE>>=
+LD(genos)$"R^2"
+@
+\item What pair of sites have the greatest LD?
+
+\item What is the average LD of the  first 50 sites?
+
+
+Suppose we are interested in finding areas of high LD without looking looking at either LD map.  One way this can be performed is by taking a moving average of the $r^2$ values across a subset of sites.  In order to do this I've created the  \texttt{avgld} function. This function takes 4 arguments:
+\begin{itemize}
+\item \texttt{genos}: The \texttt{genotype} object.
+\item \texttt{start}: The column containing the first site in the \texttt{genotype} object.
+\item \texttt{end}: The column containing the last site in the \texttt{genotype} object.
+\item \texttt{length}: The length of the subset of sites we wish to find the average LD for.
+\end{itemize}
+The function will find the average LD for the first \texttt{length} sites and then move up one site and do it again, until it reaches the \texttt{end} site.  
+
+The output will be a matrix with three columns:
+
+\begin{itemize}
+\item ``AvgLD": The average LD for each subset of sites.
+\item ``Start": The start position for each subset of sites.
+\item ``Stop": The stop position for each subset of sites.
+\end{itemize}
+
+<<movingavg, eval=FALSE>>=
+avgld<-function(genos, start, end, length){
+lo<-start:(end-length+1)
+hi<-length:end
+vec<-rbind(lo, hi)
+avgld<-function(vec){
+  start<-vec[1]
+  end<-vec[2]
+  genomat<-genos[start:end]
+  mat<-LD(genomat)$"R^2"
+avg<-mean(mat, na.rm=TRUE)
+cbind(avg,start,end)}
+avgLD<-t(apply(vec,2,avgld))
+colnames(avgLD)<-c("AvgLD", "Start", "Stop")
+avgLD}
+@
+\item Plot the moving average of the first 50 sites, with a window length of 10?  Is it consistent with your results from \textit{question 2}?
+
+
+
+\end{enumerate}
+\end{exercise}
+
+
+\end{document}

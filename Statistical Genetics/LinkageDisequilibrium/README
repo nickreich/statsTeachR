@@ -1,0 +1,19 @@
+Linkage Disequilibrum Module:
+
+This modeul contains 6 folders:
+
+	assignments: This folder is empty
+
+	labs: This folder contains 2 labs saved as PDF files
+		LD_Lab1: This is the first lab to complete in this module and requires the "haplotypes_chr1.RData" file also located in this folder.
+			support files: "haplotypes_chr1.RData
+		LD_Lab2  This is the second lab to complete in this module and requires the "genotypes_chr1.RData" file also located in this folder.
+			support files: "genotypes_chr1.RData"
+
+	quiz: This folder is empty
+	
+	slides: This folder contains a slideshow for teaching statistical techniques and biological concepts used in this lab.
+
+	solutions: This folder contains solutions to LD_Lab1 and LD_Lab2
+
+	source:  This folder contains the support files to creating the labs, solutions, and slideshow.
