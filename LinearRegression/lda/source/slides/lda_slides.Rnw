@@ -1,0 +1,407 @@
+%% template document for beamer slides that use knitr 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% VERY IMPORTANT NOTE: %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% every frame that has some knitr in it, must have [fragile] specified, as follows:
+%%        \begin{frame}[fragile]{Multiple linear regression model}
+
+
+
+\documentclass[table]{beamer}
+
+
+\input{../statsTeachR_preamble_slides_knitr}
+\input{../shortcuts}
+
+%        The following variables are assumed by the standard preamble:
+
+\title{A Brief Introduction to Longitudinal Data Analysis}
+
+%        Global variable containing text of authorship acknowledgments and license terms:
+\newcommand{\LicenseText}{These slides were adapted for \href{http://statsteachr.org}{statsTeachR} by Nicholas Reich from slides written by Jeff Goldsmith and are released under a \href{http://creativecommons.org/licenses/by-sa/3.0/deed.en_US}{Creative Commons Attribution-ShareAlike 3.0 Unported License}. }
+
+
+\hypersetup{colorlinks,linkcolor=,urlcolor=MainColor}
+
+
+%	******	Document body begins here	**********************
+
+\begin{document}
+
+%	Title page
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%	******	Everything through the above line must be placed at
+%		the top of any TeX file using the statsTeachR standard
+%		beamer preamble. 
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+<<ggplot2, echo=FALSE, message=FALSE>>=
+require(ggplot2)
+theme_set(theme_bw())
+@
+
+\begin{frame}{Today's topic}
+
+
+A rapid overview of Longitudinal Data Analysis
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}{Focus on covariance}
+
+\bi
+        \myitem We've extensively used OLS for the model
+		$$ \by = \bX \bbeta + \bepsilon$$ 
+	where $E(\bepsilon) = 0$ and $Var(\bepsilon) = \sigma^2 I$
+	\myitem We are now more interested in the case of $Var(\bepsilon) = \sigma^2 V$
+	\myitem WLS and GLS were useful in this setting, but required a known $V$ matrix
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Longitudinal data}
+
+\bi
+	\myitem Data is gathered at multiple time points for each study participant
+	\myitem Repeated observations / responses
+	\myitem Longitudinal data regularly violates the ``independent errors" assumption of OLS
+	\myitem LDA allows the examination of changes over time (aging effects) and adjustment for individual differences (subject effects)
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Some hypothetical data}
+
+\begin{figure}[h]
+    \includegraphics[width=\textwidth]{Fig01.png}  
+\end{figure}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Notation}
+
+\bi
+	\myitem We observe data $y_{ij}, \bx_{ij}$ for subjects $i = 1, \ldots I$ at visits $j = 1, \ldots, J_i$
+	\myitem Vectors $\by_{i}$ and matrices $\bX_{i}$ are subject-specific outcomes and design matrices
+	\myitem Total number of visits is $n = \sum_{i = 1}^{I} J_i$
+	\myitem For subjects $i$, let
+		$$ \by_{i} = \bX_{i} \bbeta + \bepsilon_{i}$$
+	where $\var(\bepsilon_{i}) = \sigma^2 V_{i}$
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Notation}
+
+\bi
+	\myitem Overall, we pose the model 
+		$$ \by = \bX \bbeta + \bepsilon$$
+	where $\var(\bepsilon) = \sigma^2 V$ and 
+		$$ V = \left[ \begin{array}{cccc}
+			V_1 		& 0 		& \ldots 	& 0 \\
+			0 		& V_2	& \ldots 	& 0 \\
+			\vdots 	& \vdots	& \ddots 	&  \\
+			0 		& 0 		& 		& V_{I} \\
+		 \end{array} \right]
+		 $$
+\ei
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Covariates}
+
+The covariates $\bx_{i} = x_{ij1} \ldots x_{ijp}$ can be
+\bi
+	\myitem Fixed at the subject level -- for instance, sex, race, fixed treatment effects
+	\myitem Time varying -- age, BMI, smoking status, treatment in a cross-over design
+\ei
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Motivation}
+
+Why bother with LDA?
+\bi
+	\myitem Correct inference
+	\myitem More efficient estimation of shared effects
+	\myitem Estimation of subject-level effects / correlation
+	\myitem The ability to ``borrow strength" -- use both subject- and population-level information
+        \myitem Repeated measures is a very common feature of real data!
+\ei
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Example dataset}
+
+An example dataset comes from the Multicenter AIDS Cohort Study ({\tt CD4.txt}).
+\bi
+        \myitem 366 HIV+ individuals
+	\myitem Observation of CD4 cell count (a measure of disease progression)
+	\myitem Between 1 and 11 observations per subject (1888 total observations)
+\ei
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{CD4 dataset}
+
+<<loadData>>=
+data <- read.table("../../data/CD4.txt", header = TRUE)
+head(data, 12)
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{CD4 dataset}
+
+<<plotData, tidy=FALSE, fig.height=4>>=
+qplot(month, cd4, data=data)
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{CD4 dataset}
+
+<<spagPlot, tidy=FALSE, fig.height=4>>=
+qplot(month, cd4, data=data, geom=c("point", "line"), 
+      group=ID)
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{CD4 dataset}
+
+<<spagPlot2, tidy=FALSE, fig.height=4>>=
+qplot(month, cd4, data=data, geom=c("point", "line"), 
+      group=ID, alpha=I(.2))
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{CD4 dataset}
+
+<<spagPlot3, tidy=FALSE, fig.height=4>>=
+IDS <- unique(data$ID)
+data$highlight <- as.factor(data$ID %in% IDS[1:10])
+qplot(month, cd4, data=data, geom=c("point", "line"), 
+      group=ID, color=highlight, alpha=highlight) +
+        theme(legend.position="none")
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]{Visualizing covariances}
+
+Suppose the data consists of three subjects with four data points each. 
+\bi
+        \myitem In the model
+		$$ \by_{i} = \bX_{i} \bbeta + \bepsilon_{i}$$
+	where $\var(\bepsilon_{i}) = \sigma^2 V_{i}$, what are some forms for $V_{i}$?
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Approaches to LDA}
+
+We'll consider two main approaches to LDA
+\bi
+        \myitem Marginal models, which focus on estimating the main effects and variance matrices but don't introduce subject effects
+        \bi
+                \myitem ``Simplest'' LDA model, just like cross-sectinal data
+                \myitem Requires new methods, like GEE, to control for variance structure 
+                \myitem Arguably easier incorporation of different variance structures
+        \ei
+        \myitem Random effects models, which introduce random subject effects (i.e. effects coming from a distribution, rather than from a ``true" parametric model)
+        \bi
+                \myitem ``Intuitive'' model descriptions
+                \myitem Explicit estimation of variance components
+                \myitem Caveat: can change parameter interpretations
+        \ei
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{First problem: exchangeable correlation}
+
+Start with the model where
+$$V_{i} = \left[ \begin{array}{cccc}
+			1 		& \rho	& \ldots 	& \rho \\
+			\rho		& 1		& \ldots 	& \rho \\
+			\vdots 	& \vdots	& \ddots 	&  \\
+			\rho		& \rho	& 		& 1 \\
+		 \end{array} \right]
+$$
+This implies 
+\bi
+	\myitem $var(y_{ij}) = \sigma^2$
+	\myitem $cov(y_{ij}, y_{ij`})= \sigma^2 \rho$
+	\myitem $cor(y_{ij},  y_{ij`})= \rho$
+\ei
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Marginal model}
+
+The marginal model is
+        $$ \by = \bX \bbeta + \bepsilon$$
+where 
+\bi
+	\myitem $\var(\bepsilon) = \sigma^2 V$, 
+	\myitem $$V_{i} = \left[ \begin{array}{cccc}
+			1 		& \rho	& \ldots 	& \rho \\
+			\rho		& 1		& \ldots 	& \rho \\
+			\vdots 	& \vdots	& \ddots 	&  \\
+			\rho		& \rho	& 		& 1 \\
+		 \end{array} \right]
+	$$
+\ei
+
+Tricky part is estimating the variance of the parameter estimates for this new model.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Fitting a marginal model using GEE}
+
+Generalized Estimating Equations provide a semi-parametric method for fitting a marginal model that takes into account the correlation between observations.
+
+$$ \mathbb E[CD4_{ij}|month] = \beta_0 + \beta_1 \cdot month $$
+
+With GEE, assume  $V_{i}$ is exchangeable.
+
+\scriptsize
+<<MM, message=FALSE, results='hide', tidy=FALSE>>=
+require(gee)
+linmod <- lm(cd4~month, data=data)
+geemod <- gee(cd4~month, data=data, id=ID, 
+              corstr="exchangeable")
+@
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Fitting a marginal model using GEE}
+
+$$ \mathbb E[CD4_{ij}|month] = \beta_0 + \beta_1 \cdot month $$
+
+With GEE, assume $V_{i}$ is exchangeable.
+
+\scriptsize
+<<mmoutput>>=
+summary(linmod)$coef
+summary(geemod)$coef
+@
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Random effects model}
+
+A random intercept model with one covariate is given by 
+$$ y_{ij} = \beta_{0} + b_{i} + \beta_{1} x_{ij} + \epsilon_{ij}$$
+where
+\bi
+        \myitem $b_{i} \sim \N{0}{\tau^2}$
+	\myitem $\epsilon_{ij} \sim \N{0}{\nu^2}$
+\ei
+
+{\bf For exchangeable correlation and continuous outcomes}, the random intercept model is equivalent to the marginal model.
+
+Under this model
+\bi
+	\myitem $var(y_{ij}) = $
+	\myitem $cov(y_{ij}, y_{ij`}) = $
+	\myitem $cor(y_{ij},  y_{ij`}) = \rho = $
+\ei
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Fitting a random effects model}
+
+\scriptsize
+<<REmod, message=FALSE>>=
+require(lme4)
+memod <- lmer(cd4 ~ (1 | ID) + month, data = data)
+summary(memod)$coef
+summary(geemod)$coef
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Conclusion}
+
+Today we have..
+\bi
+
+        \myitem introduced longitudinal data analysis.
+        \myitem defined and fitted Marginal and Random Effects models.
+
+\ei
+
+
+\end{frame}
+
+\end{document}
