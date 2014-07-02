@@ -6,12 +6,12 @@
 \documentclass[table]{beamer}
 
 
-\input{../standard_knitr_beamer_preamble}
+\input{../statsTeachR_preamble_slides_knitr}
 
 %        The following variables are assumed by the standard preamble:
 %        Global variable containing module name:
 
-\title{Multiple Linear Regression: \\ Categorical Predictors}
+\title{Multiple Linear Regression: \\ Global F Tests}
 %	Global variable containing module shortname:
 %		(Currently unused, may be used in future.)
 \newcommand{\ModuleShortname}{multRegression}
