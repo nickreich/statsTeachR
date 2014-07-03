@@ -1,0 +1,39 @@
+Name: Forced Expiratory Volume (FEV) Data
+Size: 654 observations, 5 variables
+
+Descriptive Abstract:
+Sample of 654 youths, aged 3 to 19, in the area of East Boston
+during middle to late 1970's. Interest concerns the relationship
+between smoking and FEV. Since the study is necessarily
+observational, statistical adjustment via regression models
+clarifies the relationship.
+
+Sources:
+Rosner, B. (1999), Fundamentals of Biostatistics, 5th Ed., Pacific Grove, CA: Duxbury
+
+
+Columns  Label     Description
+1-3        age     discrete measure, positive integer (years)
+5-10       fev     continuous measure (liters)
+12-15       ht     continuous measure (inches)
+19         sex     discrete/nominal (Female coded 0, Male coded 1)
+25       smoke     discrete/nominal (Nonsmoker coded 0, Smoker coded 1)
+
+
+PEDAGOGICAL NOTES:
+This is a versatile dataset that can be used throughout an
+introductory statistics course as well as an introductory modelling
+course.  It includes many issues from statistical adjustment in
+observational studies, to subgroup analysis, quadratic regression 
+and analysis of covariance.
+
+REFERENCES:
+Kahn,M. (2003), "Data Sleuth," STATS, 37, 24.
+
+SUBMITTED BY:
+Michael J. Kahn
+Department of Mathematics and Computer Science
+Wheaton College
+Norton, MA  02766
+(508) 286-5690
+mkahn@wheatonma.edu
