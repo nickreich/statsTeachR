@@ -6,7 +6,7 @@
 \documentclass[table]{beamer}
 
 
-\input{../standard_knitr_beamer_preamble}
+\input{../statsTeachR_preamble_slides_knitr}
 
 %        The following variables are assumed by the standard preamble:
 %	Global variable containing module name:
@@ -27,7 +27,6 @@
 
 \input{../shortcuts}
 \usepackage{bbm}
-\hypersetup{colorlinks=TRUE, urlcolor=blue}
 
 %%%%%%%% IMPORTANT -- MUST HAVE [fragile] for some/all frames chunks to have output work correctly. 
 
