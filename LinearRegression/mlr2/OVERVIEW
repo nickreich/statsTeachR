@@ -1,8 +1,8 @@
 Name: mlr2
 Title: Multiple Linear Regression
-Date: 2014-05-28
+Date: 2014-07-02
 Author: Nicholas G Reich <nick@schoolph.umass.edu>
-Version: v0.5
+Version: v0.6
 Description: This module was adapted from the Statistical Modeling and Data Visualization course at UMass-Amherst. This module provides materials for five classes on multiple linear regression targeted for upper-level undergraduate or entry-level graduate students. Topics covered: resampling and bootstrap inference in a regression context, regression diagnostics, model selection, and variable interactions. There are two quizzes included in this module, one lab exercise (on permutation tests), and a few files with code that students are encouraged to use and build off of. 
 Keywords: regression, multiple linear regression
 Suggests: slr, mlr1
